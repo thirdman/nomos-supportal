@@ -21,7 +21,7 @@ delete babelLoaderQuery.env;
 module.exports = {
 	entry: __dirname + "/src/index.jsx",
 	output: {
-		path: __dirname + "/dist/",
+		path: __dirname + "/public/assets/",
 		filename: "bundle.js"
 	},
 	module: {
