@@ -1,2 +1,12 @@
 export Editor from './Editor';
+export BackgroundImage from './BackgroundImage/BackgroundImage';
+export Icon from './Icon/Icon';
+export ImageHex from './ImageHex/ImageHex';
+export LoadingAnimation from './LoadingAnimation/LoadingAnimation';
 export Section from './Section';
+export TransitionAnimation from './TransitionAnimation/TransitionAnimation';
+// export Input from './Tags';
+// export TextArea from './Tags';
+// export Select from './Tags';
+// export Radio from './Tags';
+// export Checkbox from './Tags';

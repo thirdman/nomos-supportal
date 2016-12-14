@@ -1,0 +1,121 @@
+	@import '../../global/global.scss';
+
+.App{
+	// background: linear-gradient(#151515 0%, #4b4b4b 100%);
+	// background: linear-gradient( -5deg, #001a21, #16404c );
+	background: linear-gradient(-25deg, #044658, #164c42);
+	background: linear-gradient(175deg, #25d0ff, #033573);
+	background: linear-gradient(175deg, #001e33, #00a9d0);
+	background: linear-gradient(175deg, #001e33, #000);
+	min-height: 100%;
+	lost-utility: clearfix;
+	&.isConnecting{
+		.appLoading{
+			opacity: 1;
+			&.centered{
+				display: flex;
+			}
+		}
+		.appContent{
+			opacity: 0;
+		}
+	}
+	&.isLoading{
+		.appLoading{
+			opacity: 1;
+			&.centered{
+				display: flex;
+			}
+		}
+		.appContent{
+			opacity: 0;
+		}
+	}
+	.appLoading{
+		opacity: 0;
+		display: none;
+		text-align: left;
+		position: fixed;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background: #222;
+		z-index: 152;
+		transition: opacity .3s ease;
+		&.centered{
+			display: none;
+		  align-items: center;
+		  justify-content: center;
+		}
+		.loadingMessage{
+			text-align: left;	
+			color: #eee;
+		}
+	}
+	////////////////////
+	///// STRUCTURE
+	////////////////////
+	@lost flexbox flex;
+	.header{
+		background: transparent;
+		width: 100%;
+		padding: 8px 0;
+		lost-flex-container: row;
+		.headerMain{
+			lost-column: 8/12;
+			position: relative;
+			min-height: 72px;
+			&:after{
+				content: "";
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				height: 2px;
+				width: 24px;
+				background: $textColor;
+			}
+		}
+		.userWrap{
+			lost-column: 4/12;
+			position: relative;
+/*
+			&:after{
+				content: "";
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				height: 2px;
+				width: 24px;
+				background: $textColor;
+			}
+*/
+		}
+	}
+	.footer{
+		min-height: 156px;
+		margin-top: 40px;
+		position: relative;
+		padding-top: 40px;
+		clear: both;
+		&:before{
+			content: "";
+			position: absolute;
+			top: 40px;
+			left: 0;
+			height: 2px;
+			width: 24px;
+			background: $textColor;
+		}
+	}
+	.appContent{
+		// lost-center: 1380px;
+		margin-left: auto;
+		margin-right: auto;
+		// max-width: 1380;
+		max-width: 1272px;
+		z-index: 2;
+		position: relative;
+		padding: 0 32px;
+	}
+}

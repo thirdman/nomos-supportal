@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.1 (35376) - http://www.bohemiancoding.com/sketch -->
+    <title>logo</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="20" cy="20" r="20"></circle>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="logo">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <use id="Oval-3" fill="#53D0FF" xlink:href="#path-1"></use>
+            <path d="M-3,18 C15,13 30.0340512,23.1744634 47.0340512,16.1744634 C49.0340512,17.1744634 41.377197,39 40.377197,40 C22.377197,46 9.37719699,43.5841692 1.37719699,45 C0.377196994,44 -5,19 -3,18 Z" id="Path-11-Copy" fill="#005D80" mask="url(#mask-2)"></path>
+            <path d="M-4,20.2691663 C5,15 27,28.2691663 42,22.2691663 C41,27.2691663 88,31 45,28 C2,25 -6,35 -9,43 C-12,51 -13,25.5383325 -4,20.2691663 Z" id="Path-12" fill="#0088BA" mask="url(#mask-2)"></path>
+            <path d="M1.03405124,19.1744634 C34,21 33,14 45,15 C47,16 45,21 44,22 C26,28 22,19.5841692 14,21 C13,20 -0.965948756,20.1744634 1.03405124,19.1744634 Z" id="Path-11-Copy" fill="#0088BB" mask="url(#mask-2)"></path>
+            <path d="M-3.65685425,19.8255366 C12.3431458,17.8255366 21,22 42,21 C44,22 44,22 43,23 C25,29 8,19 -4,23 C-5,22 -5.65685425,20.8255366 -3.65685425,19.8255366 Z" id="Path-11-Copy-2" fill="#19AEFF" mask="url(#mask-2)"></path>
+            <path d="M-3,21.7212289 C13,19.7212289 27,27.7212289 44,20.7212289 C46,21.7212289 45,23 44,24 C26,30 10,17 -5,27 C-6,26 -5,22.7212289 -3,21.7212289 Z" id="Path-11" fill="#FFFFFF" mask="url(#mask-2)"></path>
+        </g>
+    </g>
+</svg>

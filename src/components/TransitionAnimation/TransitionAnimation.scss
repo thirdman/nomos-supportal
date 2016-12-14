@@ -1,0 +1,43 @@
+@import '../../global/global.scss';
+
+.TransitionAnimation{
+	position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999999999;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  transition: opacity .2s ease-in-out;
+	&.isVisible{
+		opacity: 1;
+		visibility: visible;
+	}
+	.bgLayer{
+		position: absolute;
+	  left: 50%;
+	  top: 50%;
+	  transform: translateY(-50%) translateX(-3.846%); //-2%
+	  height: 100%;
+	  /* our sprite is composed of 25 frames */
+	  width: 1300%;
+	  background: url(https://res.cloudinary.com/thirdman-design/image/upload/v1479436836/obp/sprite.png) no-repeat 0 0;
+	  background-size: 100% 100%;
+	  &.isActive{
+			animation: sequence 0.5s steps(12);
+			animation-fill-mode: forwards;
+	  }
+  }
+}
+
+
+@keyframes sequence {
+  0% {
+    transform: translateY(-50%) translateX(-3.846%);
+  }
+  100% {
+    transform: translateY(-50%) translateX(-96.154%);
+  }
+}

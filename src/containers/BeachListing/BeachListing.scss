@@ -1,0 +1,96 @@
+@import '../../global/global.scss';
+$animationInterval: 0.1s;
+
+.BeachListing{
+	width: 100%;
+	opacity: 1;
+	&.loading{
+		.listing{
+			opacity: 0;
+		}
+	}
+	.listing{
+		display: block;
+		border-top: 1px dotted $lineColor;
+		padding: 16px 0;
+		&:first-child{
+			margin-top: 16px;
+		}
+		.imgWrap{
+			margin: 0 0 2px 2px;
+			display: inline-block;
+	    display: inline-block;
+	    height: 100px;
+	    overflow: hidden;
+	    float: left;
+	    width: 100px;
+	    border-radius: 4px;
+	    margin-right: 16px;
+			img{
+				height: 100%;
+			}
+		}
+		opacity: 0;
+		&.isVisible{
+			opacity: 1;
+			transition: .4s opacity ease;
+		}
+	  @for $i from 1 through 24 {
+      &:nth-child(#{$i}) { 
+       animation-delay: $animationInterval * $i;
+       transition-delay: $animationInterval * $i;
+      }
+    }
+	}
+	
+	.alt{
+		padding: 16px;
+    background: rgba(255,255,255,.05);
+    margin: 16px 0;
+    border-radius: 8px;
+    .Row{
+	    margin-top: 8px;
+    }
+	}
+	.success{
+		padding: 16px;
+    background: $green;
+    color: $backgroundColor;
+    margin: 16px 0;
+    border-radius: 8px;		
+    h3 {
+	    color: $backgroundColor;
+    }	
+	}
+	.error{
+		padding: 16px;
+    background: rgba(245, 167, 11, 1);
+    color: #fff;
+    color: $backgroundColor;
+    margin: 16px 0;
+    border-radius: 8px;
+    h3 {
+	    color: $backgroundColor;
+    }	
+	}
+
+}
+
+
+@keyframes foldIn {
+  0% {
+      opacity: 0;
+      transform-style: preserve-3d;
+      transform-origin: 50% 0;
+		  // transform:scale(1) rotateX(-60deg) translateY(9px);
+			transform:scale3d(1, 0, 1) rotateX(-90deg) translateY(50px);
+			// transform:scale3d(1, 0, 1) rotateX(-90deg) translateY(0);
+  }
+  100% {
+      opacity: 1;
+      transform-style: preserve-3d;
+      transform-origin: 50% 0;
+			transform: scale3d(1, 1, 1) rotateX(0deg)  translateY(0) ;
+ }
+}
+
