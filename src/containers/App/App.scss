@@ -3,10 +3,10 @@
 .App{
 	// background: linear-gradient(#151515 0%, #4b4b4b 100%);
 	// background: linear-gradient( -5deg, #001a21, #16404c );
-	background: linear-gradient(-25deg, #044658, #164c42);
-	background: linear-gradient(175deg, #25d0ff, #033573);
-	background: linear-gradient(175deg, #001e33, #00a9d0);
-	background: linear-gradient(175deg, #001e33, #000);
+	// background: linear-gradient(-25deg, #044658, #164c42);
+	// background: linear-gradient(175deg, #25d0ff, #033573);
+	// background: linear-gradient(175deg, #001e33, #00a9d0);
+	background: linear-gradient(-12deg, #ccc, #f3f3f3);
 	min-height: 100%;
 	lost-utility: clearfix;
 	&.isConnecting{
@@ -56,57 +56,26 @@
 	////////////////////
 	///// STRUCTURE
 	////////////////////
-	@lost flexbox flex;
-	.header{
-		background: transparent;
-		width: 100%;
-		padding: 8px 0;
-		lost-flex-container: row;
-		.headerMain{
-			lost-column: 8/12;
-			position: relative;
-			min-height: 72px;
-			&:after{
-				content: "";
-				position: absolute;
-				bottom: 0;
-				left: 0;
-				height: 2px;
-				width: 24px;
-				background: $textColor;
-			}
-		}
-		.userWrap{
-			lost-column: 4/12;
-			position: relative;
-/*
-			&:after{
-				content: "";
-				position: absolute;
-				bottom: 0;
-				left: 0;
-				height: 2px;
-				width: 24px;
-				background: $textColor;
-			}
-*/
-		}
+	.topBar{
+		// background: #fff;
+		height: 48px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 32px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+    .title{
+	    text-align: center;
+    }
+    .headerItem{
+	    padding: 8px;
+    }
 	}
+	// @lost flexbox flex;
 	.footer{
-		min-height: 156px;
-		margin-top: 40px;
+		// min-height: 156px;
+		margin-top: 16px;
 		position: relative;
-		padding-top: 40px;
+		padding-top: 16px;
 		clear: both;
-		&:before{
-			content: "";
-			position: absolute;
-			top: 40px;
-			left: 0;
-			height: 2px;
-			width: 24px;
-			background: $textColor;
-		}
 	}
 	.appContent{
 		// lost-center: 1380px;
@@ -118,4 +87,46 @@
 		position: relative;
 		padding: 0 32px;
 	}
+	////////////////////
+	///// CARD
+	////////////////////
+	.card{
+		width: 260px;
+		height: 300px;
+		border-radius: 4px;
+		background: #fff;
+		display: inline-block;
+		position: relative;
+		box-shadow: $cardShadow;
+		margin-right: 24px;
+		margin-bottom: 24px;
+		float: left;
+		&:hover{
+			box-shadow: $cardShadowHover;
+			cursor: pointer;
+		}
+		.cardImage{
+			width: 100%;
+			height: 100px;
+			background: #f9f9f9;
+			border-radius: 4px 4px 0 0;
+			text-align: center;
+			padding-top: 32px;
+			background: #ccc;
+		}
+		.cardContent{
+			padding: 8px;
+		}
+		.cardButton{
+			width: 32px;
+			height: 32px;
+			border-radius: 100%;
+			display: block;
+			position: absolute;
+			background: #eee;
+			bottom: 16px;
+			right: 16px;
+		}
+	}
+
 }

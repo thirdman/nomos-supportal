@@ -1,14 +1,18 @@
+@import "_variables.scss";
 // @import './fonts.scss';
 
-$textColor: 			rgba(255,255,255,.8);
-$lineColor: 			rgba(255,255,255,.5);
-$borderColor: 			rgba(255,255,255,.2);
+$textColor: 			#333;
+$lineColor: 			$nomosLine;
+$borderColor: 		$nomosLine;
 $highlightColor: 	rgba(255,255,255,.1);
 $backgroundColor: #001e33;
 $padding:					8px;
 
 $green: #ccf50b;
 $orange: rgba(245, 167, 11, 1);
+
+$cardShadow: 0 1px 16px -4px rgba(0,0,0,.15);
+$cardShadowHover: 0 3px 24px -4px rgba(0,0,0,.35);
 
 /*
 html {
@@ -21,7 +25,8 @@ html {
 html, body{
 	margin: 0;
 	padding: 0;
-	background: #222222;
+	// background: $nomosLightLightGrey;
+	background: #f3f3f3;
 	font-family: helvetica, sans-serif;
 	// width: 100%;
 	// height: 100%;
@@ -47,8 +52,8 @@ h3{
 }
 h4{
 	text-transform: uppercase;
-  font-weight: lighter;
-  letter-spacing: .09em;
+  font-weight: normal;
+ //  letter-spacing: .09em;
 	font-size: 13px;
   // margin-top: 3em;
   margin-bottom: 8px;
@@ -93,7 +98,15 @@ a{
 		padding: 16px;
 	}
 }
-
+.subtitle{
+	display: block;
+	font-weight: normal;
+	padding: 0;
+	margin: 0;
+	color: $nomosGrey;
+	text-transform: uppercase;
+	font-size: $font-size-small;
+}
 .tag{
 	margin: 2px;
 	background: $highlightColor;

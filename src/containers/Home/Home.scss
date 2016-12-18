@@ -25,23 +25,10 @@ section{
 }
 .Home{
 	margin: 0;
+  position: relative;
+  display: block;
+  width: 100%;
 	// padding: 32px;
-	.featHome{
-		min-height: 300px;
-		padding-top: 192px;
-		position: relative;
-		.homeQuote{
-			position: absolute;
-			left: 0;
-			top:	32px;
-			text-align: left;
-			font-size: 24px;
-			font-weight: 200;
-			font-style: italic;
-			display: block;
-			display: none;
-		}
-	}
 	.filterControl{
 		text-align: left;
 		.button{
@@ -50,7 +37,85 @@ section{
 			margin-right: 4px;
 		}
 	}
+	.orgIconWrap{
+		width: 40px;
+		height: 40px;
+		display: inline-block;
+		border-radius: 4px;
+		padding: 4px;
+		margin-right: 8px;
+		vertical-align: middle;
+	}
+	.additionalData{
+		background-color: rgba(0,0,0,.05);
+		padding: 8px;
+		border-radius: 4px;
+		display: block;
+	}
+	////////////////////
+	///// CARD
+	////////////////////
+	.card{
+		width: 260px;
+		height: 300px;
+		border-radius: 4px;
+		background: #fff;
+		display: inline-block;
+		position: relative;
+		box-shadow: $cardShadow;
+		margin-right: 24px;
+		margin-bottom: 24px;
+		float: left;
+		&:hover{
+			box-shadow: $cardShadowHover;
+			cursor: pointer;
+		}
+		.cardImage{
+			width: 100%;
+			height: 100px;
+			background: #f9f9f9;
+			border-radius: 4px 4px 0 0;
+			text-align: center;
+			padding-top: 32px;
+			background: #ccc;
+		}
+		.cardContent{
+			padding: 8px;
+		}
+		.cardButton{
+			width: 32px;
+			height: 32px;
+			border-radius: 100%;
+			display: block;
+			position: absolute;
+			background: #eee;
+			bottom: 16px;
+			right: 16px;
+		}
+	}
+	////////////////////
+	///// USER
+	////////////////////
+	.userItem{
+		display: block;
+		position: relative;
+		.userTitle{
+			margin-left: 8px;
+		}
+	}
+	////////////////////
+	///// AGREEMENT
+	////////////////////
+	.agreementItem{
+		display: block;
+		position: relative;
+		padding: 8px 0;
+		width: 100%;
+	}
 }
+
+
+// OLD STUFF
 .beach{
 	border-top: 1px dotted $lineColor;
 	padding: 24px 0;

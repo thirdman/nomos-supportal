@@ -1,25 +1,7 @@
 @import '../../global/global.scss';
 
 .Icon{
-	display: inline-block;
-	border: 1px solid $textColor;
-	// border-radius: 50%;
-  margin: 2px 4px;
-  transition: transform .3s ease;
-  &.noBorder{
-	  border: 0px solid white;
-  }
-  &.feature{
-	  &:hover{
-		  g{
-			  fill: #fff;
-		  }
-	  }
-  }
-  &:hover{
-	  // transform: scale3d(1.3, 1.3, 1.3);
-	// transform: rotate(360deg);
-  }
+	display: block;
 	&.isHovered{
 		
 	}
@@ -29,6 +11,61 @@
 		line-height: 100%;
 	}
 	g{
-		fill: $textColor;
+		fill: $nomosBlack;			
+	}
+	&.black{
+		g{
+			fill: $nomosBlack;
+		}
+	}
+	&.darkGrey{
+		g{
+			fill: $nomosDarkGrey;
+		}
+	}
+	&.grey{
+		g{
+			fill: $nomosGrey;
+		}
+	}
+	&.lightGrey{
+		g{
+			fill: $nomosLightGrey;
+		}
+	}
+	&.lightLightGrey{
+		g{
+			fill: $nomosLightLightGrey;
+		}
+	}
+	&.white{
+		g, path{
+			fill: #fff;
+		}
+	}
+	&.blue{
+		g{
+			fill: $nomosBlue;
+		}
+	}
+	&.red{
+		g{
+			fill: $nomosRed;
+		}
+	}
+	&.orange{
+		g{
+			fill: $nomosOrange;
+		}
+	}
+	&.green{
+		g{
+			fill: $nomosGreen;
+		}
+	}
+	&.yellow{
+		g{
+			fill: $nomosYellow;
+		}
 	}
 }

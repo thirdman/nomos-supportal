@@ -1,0 +1,71 @@
+@import '../../global/global.scss';
+
+.SubNavWrap{
+	position: relative;
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+	display: block;
+	width: 100%;
+	a{
+		color: $nomosGrey;
+		text-decoration: none;
+	}
+	li{
+		border-bottom: 1px dashed #ddd; 
+		border-left: 4px solid transparent;
+		padding-left: 4px;
+		line-height: 32px;
+		cursor: pointer;
+		position: relative;
+		> span{
+			padding: 4px;	
+			color: $nomosGrey;
+			display: block;
+			text-align: left;
+			line-height: $padding*3;
+			cursor: pointer;
+		}
+		.iconWrap{
+			width: 16px;
+			height: 16px;
+			position: absolute;
+			right: 0;
+			top: 0;
+			opacity: 0;
+			transform: translateX(0);
+			transition: transform .3s ease, opacity .3s ease;
+		}
+		&.isDisabled{
+			color: $nomosLightGrey;
+			cursor: default;
+			.iconWrap{
+				display: none;
+			}
+			&:hover{
+				border-left: 4px solid transparent;
+				.iconWrap{
+					display: none;
+				}
+			}
+		}
+		&.isSelected{
+			border-left: 4px solid $nomosBlue;
+			position: relative;
+			> span{
+				color: $nomosBlue;
+			}
+			.iconWrap{
+				transform: translateX(0);
+				opacity: 1;				
+			}
+		}
+		&:hover{
+			border-left: 4px solid $nomosLightGrey;
+			.iconWrap{
+				transform: translateX(-8px);
+				opacity: 1;
+			}
+		}
+	}
+}

@@ -19,7 +19,7 @@ export default class Icon extends Component {
 
 	static defaultProps = {
 		icon: 'view',
-		source: 'icons/',
+		source: 'icons/interface/',
 		color: 'grey',
 		hasDivider: false,
 		classNameProps: ['black']
@@ -30,12 +30,12 @@ export default class Icon extends Component {
 
 	@autobind
 	doMouseOver() {
-		this.setState({ isHovered: true });
+		this.setState({isHovered: true});
 	}
 
 	@autobind
 	doMouseOut() {
-		this.setState({ isHovered: false });
+		this.setState({isHovered: false});
 	}
 
 	render() {
@@ -52,10 +52,13 @@ export default class Icon extends Component {
 		let tempSize = size || '100%';
 		let tempOpacity = this.state.isHovered ? 0.8 : 1;
 
+		if (icon === 'loading') {
+			source = 'icons/';
+		}
 		if (borderColor || size) {
 			tempStyle = {
 				boxSizing: 'content-box !important',
-				border: '2px solid' + borderColor, // eslint-disable-line
+				border: '2px solid' + borderColor,
 				borderRadius: '50%',
 				width: tempSize,
 				height: tempSize,
@@ -66,14 +69,12 @@ export default class Icon extends Component {
 
 		newClassNameProps = classNameProps.concat(color);
 		const classes = newClassNameProps.map((classV) => styles[classV]).join(' ');
-		let theIcon = require('../../images/' + source + 'favourite.svg'); // eslint-disable-line
-		if (require('../../images/' + source + icon + '.svg')) { // eslint-disable-line
-			theIcon = require('../../images/' + source + icon + '.svg') // eslint-disable-line
-		}; // eslint-disable-line
+		let theIcon = require('../../images/' + source + icon + '.svg'); // eslint-disable-line
+
 		return (
 			<span
 				style={tempStyle}
-				dangerouslySetInnerHTML={{ __html: theIcon }}
+				dangerouslySetInnerHTML={{__html: theIcon}}
 				onMouseOver={this.doMouseOver}
 				onMouseOut={this.doMouseOut}
 				className={cx(

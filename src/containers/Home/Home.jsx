@@ -1,256 +1,385 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
+import moment from 'moment';
+	// import superagent from 'superagent';
 import {
 	// Link,
 	browserHistory
 	} from 'react-router';
 import {
-	Icon,
+	Avatar,
+	// Button,
+	Column,
+	HorizontalRule,
+	// Icon,
 	LoadingAnimation,
-	TransitionAnimation
+	ObjectInfo,
+	Row,
+	Statistic,
+	SubNavWrap,
+	TransitionAnimation,
 	} from 'components';
 
+const dataDetail = require('./data/dataDetail.js');
 const styles = require('./Home.scss');
 const Rebase = require('re-base');
+// const client = require('../../helpers/ApiClient.js');
 
 const base = Rebase.createClass({
-      apiKey: 'AIzaSyD3PzPDiOxzq9B2wyUEOzFhLukoXOrmhTE',
-      authDomain: 'otago-beach-project.firebaseapp.com',
-      databaseURL: 'https://otago-beach-project.firebaseio.com/',
-      storageBucket: 'otago-beach-project.appspot.com',
-});
+  apiKey: 'AIzaSyBLhVms5SJQKFQyAN4p6jUnJsukXhAXKH8',
+  authDomain: 'nomos-supportal.firebaseapp.com',
+  databaseURL: 'https://nomos-supportal.firebaseio.com',
+  storageBucket: 'nomos-supportal.appspot.com',
+  messagingSenderId: '1011016910326'
+}, 'myApp');
 
 export default class Home extends Component {
 	state = {
-		beaches: '',
+		// org: this.props.org,
+		activeOrg: this.props.activeOrg,
+		orgData: dataDetail[this.props.activeOrg.id],
+		activeOrgDataId: null,
 		loading: true,
 		transition: false,
-		filter: 'distance'
+		activeIndex: this.props.activeIndex
 	}
 	componentWillMount() {
-		console.log('WillMount Home');
-		this.getTagged();
+		// this.setupPage();
+		console.log('home will mount');
+		// console.log(dataDetail);
 	}
 	componentDidMount() {
-		this.getBeaches();
+		this.getAdditionalData(this.props.activeOrg.id);
+		this.toggleLoading();
 	}
-	getBeaches() {
-		base.fetch('beaches', {
-		context: this,
-		asArray: true
-		}).then(data => {
-			this.setState({
-				beaches: data,
-				loading: false,
-				transition: false
-			});
-		}).catch(error => {
-			console.log(error);
-		});
-	}
-	getTagged() {
-		base.fetch('tagged', {
-		context: this,
-		asArray: false
-		}).then(data => {
-			console.log('tagged data is: ', data);
-			this.setState({
-				tagged: data
-			});
-		}).catch(error => {
-			console.log(error);
-		});
-	}
-/*
-	addItem(newItem){
-	  this.setState({
-	    items: this.state.items.concat([newItem]) //updates Firebase and the local state
-	  });
-	}
-*/
 
 	render() {
-	// let user = base.auth().currentUser;
-		const { filter } = this.state;
-		console.log(filter);
-		console.log('this.state', this.state);
+		const { activeOrg, activeOrgDataId } = this.state;
+		// console.log(activeOrgDataId, activeOrg);
+		// console.log('home params', this.props.params);
+		console.log('home props', this.props);
+		console.log('home state', this.state);
+		// const supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
+		// const user = supportalStorage.user;
+		const agreements = this.state.orgData.agreements.data;
+		const users = this.state.orgData && this.state.orgData.users.data;
+		const activeAgreements = _.filter(agreements, function (o) { //eslint-disable-line
+			return o.attributes.agreementMode === 'Active';
+			});
+		const leaseAgreements = _.filter(agreements, function (o) { //eslint-disable-line
+			return o.attributes.agreementType === 'Lease';
+			});
+		// console.log(activeAgreements);
+		// console.log(leaseAgreements);
+		let tempCss = {
+			backgroundColor: (
+			this.state.additionalData &&
+			this.state.additionalData.color) || 'transparent'
+		};
 		return (
 			<div className={styles.Home}>
-			<div className={styles.featHome}>
-				<div className={styles.homeQuote}>
-					{/* <span>&ldquo;99 problems but a beach ain&#39;t one&rdquo;</span> */}
-				</div>
-				<div className={styles.Row}>
-					{this.state.transition ?
-						<TransitionAnimation
-							isActive={this.state.transition}
-							isVisible={this.state.transition}
-							reRender={this.state.loading}
+					<Row>
+						{this.state.transition ?
+							<TransitionAnimation
+								isActive={this.state.transition}
+								isVisible={this.state.transition}
+								reRender={this.state.loading}
+							/>
+							: null
+						}
+					</Row>
+				<Row>
+					<Column occupy={12}>
+						{activeOrg ?
+							<h2>
+							<span className={styles.orgIconWrap} style={tempCss}>
+								<Avatar
+									size="medium"
+									type="organisation"
+									title={activeOrg.attributes.knownAs}
+									defaultIconColor="#eee"
+									/>
+								</span>
+								{activeOrg.attributes.knownAs}
+							</h2>
+							: <h2>Home</h2>
+						}
+						<HorizontalRule color={'#ccc'} />
+						{this.state.activeOrgDataId ?
+							<span>active orgid: {activeOrgDataId}</span>
+							: null
+						}
+						{activeOrg ?
+							<span>
+								<Row>
+									<Column occupy={3}>
+										<h4>Organisation Status</h4>
+										<span>{activeOrg.attributes.organisationStatus}</span>
+									</Column>
+									<Column occupy={3}>
+										<h4>Created</h4>
+										<span>
+											{moment(activeOrg.attributes.audit.insertedDate).format('DD MMM, YYYY')}
+										</span>
+									</Column>
+									<Column occupy={3}>
+										<h4>Last Edited</h4>
+										<span>
+											{moment(activeOrg.attributes.audit.updatedDate).format('DD MMM, YYYY')}
+										</span>
+									</Column>
+									<Column occupy={3}>
+										<h4>Currency</h4>
+										<span>{activeOrg.attributes.defaultCurrency}</span>
+									</Column>
+								</Row>
+								<Row>
+									<Column occupy={3}>
+										<h4>Contact Name</h4>
+										<span>{activeOrg.attributes.contactDetails.contact}</span>
+									</Column>
+									<Column occupy={3}>
+										<h4>Contact Email</h4>
+										<span>{activeOrg.attributes.contactDetails.email}</span>
+									</Column>
+									<Column occupy={3}>
+										<h4>Contact phone</h4>
+										<span>{activeOrg.attributes.contactDetails.phone}</span>
+									</Column>
+									<Column occupy={3}>
+										<h4>Website</h4>
+										<span>{activeOrg.attributes.website}</span>
+									</Column>
+								</Row>
+							</span>
+							: null
+						}
+					</Column>
+				</Row>
+			<HorizontalRule color="#ccc" />
+			<Row>
+				<Column occupy={3}>
+					<Row>
+						<SubNavWrap
+							currentlySelected={1}
+							selected={'Overview'}
+							listData={[
+								{label: 'Overview', link: `${location.pathname}/overview`},
+								{label: 'Agreements', link: `${location.pathname}/agreements`},
+								{label: 'Account', link: `${location.pathname}/account`},
+								{label: 'Files', link: `${location.pathname}/files`}
+							]}
 						/>
-						: null
-					}
-					<div>
-						<h4>Sort by</h4>
-						<div className={styles.filterControl}>
-							<span
-								className={`${styles.button}
-									${this.state.filter === 'distance' ? styles.isSelected : ''}`
-									}
-								onClick={() => this.setFilter('distance')}>
-									distance
-							</span>
-							<span
-								className={`${styles.button}
-									${this.state.filter === 'travel' ? styles.isSelected : ''}`
-									}
-								onClick={() => this.setFilter('travel')}>
-									travel
-							</span>
-							<span
-								className={`${styles.button}
-									${this.state.filter === 'name' ? styles.isSelected : ''}`
-									}
-								onClick={() => this.setFilter('name')}>
-									name
-							</span>
-						</div>
-					</div>
-				</div>
-			</div>
-			<section>
-				{this.state.loading ?
-						(this.doLoadingBeaches())
-					:
-					(
-						this.state.beaches
-						// .sort((a, b) => a.distance - b.distance)
-						.sort(this.dynamicSort(filter))
-						.map((item, index) => { //eslint-disable-line
+					</Row>
+					<HorizontalRule />
+					<Row>
+						<h4>Users</h4>
+						{users && users.map((item, index) => {
 							return (
-								<div
-									className={styles.beach}
-									key={index}
-									onClick={() => this.doTranstion(`/beach/${item.dataId}`)}
-								>
-								<p className={styles.preText}>{item.distance} km</p>
-								<div className={styles.imgRow}>
-									{/* if there is a feature image...*/}
-									{item.featImg ?
-										<div className={styles.imgWrap} >
-											<img
-											src={`https://res.cloudinary.com/thirdman-design/image/upload/c_limit,e_improve,w_300/obp/${item.featImg}`}
-											role="presentation"
-											/>
-										</div>
-										: null
-									}
-									{/* if there is no feature image, but image...*/}
-									{!item.featImg && item.dataId && item.images ?
-										<div className={styles.imgWrap} >
-											{ this.getImage(item, item.dataId) }
-										</div>
-										: null
-									}
-									<div className={`${styles.imgWrap} ${styles.mapWrap}`}>
-										<img
-											src={`https://api.mapbox.com/styles/v1/thirdman/civ9900g4001j2inpk3ozyo5b/static/${item.lat},${item.lng},13,7.12,0.00,0.00/300x300?access_token=pk.eyJ1IjoidGhpcmRtYW4iLCJhIjoidjBOQ0lrYyJ9.8zzETVcyoBg2nlMquUR1TA`} alt={`Beach at ${item.name}`}
+								<div className={styles.userItem} key={index}>
+									<Avatar
+										size="small"
+										type="user"
+										title={`${item.attributes.firstName} ${item.attributes.surname}`}
+										defaultIconColor="#eee"
 										/>
-									</div>
-								</div>
-									<h3>{item.name}</h3>
-									<p className={styles.beachDescription}>{item.description}</p>
-									<span className={styles.taggedWrap}>
-										{item.dataId && this.getBeachTags(item.dataId)}
+									<span className={styles.userTitle}>
+										{`${item.attributes.firstName} ${item.attributes.surname}`}
 									</span>
 								</div>
 							);
 						})
-					)
+						}
+						{this.state.additionalData ?
+							(<span>
+								<h4>Support Team</h4>
+								<div className={styles.userItem}>
+									<Avatar
+										size="small"
+										type="user"
+										imageUrl="https://pbs.twimg.com/profile_images/499700835509469185/OQgR3hvm_400x400.jpeg"
+										title={`Onboarding Manager: ${this.state.additionalData.rep}`}
+										defaultIconColor="#eee"
+										/>
+									<span className={styles.userTitle}>
+										{this.state.additionalData.rep}
+									</span>
+								</div>
+							</span>
+							)
+							: null
+						}
+					</Row>
+					{this.state.additionalData ?
+						(<span className={styles.additionalData}>
+							<h3>Additional Data</h3>
+							<Row>
+								<Column occupy={12}>
+									<h4 className="subtitle">contact</h4>
+									<span>{this.state.additionalData.rep}</span>
+								</Column>
+								<Column occupy={12}>
+									<h4 className="subtitle">id</h4>
+									<span>{this.state.additionalData.dataId}</span>
+								</Column>
+								<Column occupy={12}>
+									<h4 className="subtitle">color</h4>
+									<span>{this.state.additionalData.color}</span>
+								</Column>
+								<Column occupy={12}>
+									<h4 className="subtitle">Status</h4>
+									<span>{this.state.additionalData.status}</span>
+								</Column>
+							</Row>
+						</span>
+						)
+						: null
+					}
+					{!this.state.additionalData ?
+						<span>loading additional content...</span>
+						: null
+					}
+				</Column>
+				<Column occupy={9}>
+					<h3>Agreements</h3>
+						{this.state.orgData ?
+							<Row>
+								<Column occupy={3}>
+									<Statistic
+										content={agreements.length}
+										title="Agreements"
+										isAnimated
+										hasDivider />
+								</Column>
+								<Column occupy={3}>
+									<Statistic
+										content={activeAgreements.length}
+										title="Active"
+										isAnimated
+										hasDivider />
+								</Column>
+								<Column occupy={3}>
+									<Statistic
+										content={agreements.length - activeAgreements.length}
+										title="Inactive"
+										isAnimated
+										hasDivider />
+								</Column>
+								<Column occupy={3}>
+									{this.state.additionalData ?
+										<Statistic
+										content={this.state.additionalData.projectedAgreementCount}
+										title="Projected Agreements"
+										isAnimated
+										hasDivider />
+										:
+										<Statistic
+										content={users.length}
+										title="Users"
+										isAnimated
+										hasDivider />
+									}
+								</Column>
+							</Row>
+							: null
+						}
+					<Row>
+						{agreements && agreements.map((item, index) => {
+							return (
+								<div className={styles.agreementItem} key={index}>
+									<ObjectInfo
+										title={item.attributes.knownAs}
+										id={(item.id).toString()}
+										type={'agreement'}
+										subType={item.attributes.agreementType}
+										// classNameProps={[item.attributes.agreementMode ? 'isInactive' : '']}
+										display="small" />
+								</div>
+							);
+						})
+						}
+					</Row>
+				</Column>
+			</Row>
+			<section>
+				{this.state.loading ?
+						(this.doLoadingItems())
+					: null
 				}
 				</section>
 			</div>
     );
   }
-	getTags = (item) => { // eslint-disable-line
-		let theTags = Object.keys(item.tags);
-		let theOutput = theTags.map((tag, index) => { //eslint-disable-line
-			return (
-				<span className={styles.iconItem} key={index}>
-					<Icon icon={tag} size={40} key={index} />
-					<h5>{tag}</h5>
-				</span>
-			);
-		});
-	return (
-			theOutput
-		);
-	}
-	getBeachTags = (dataId) => { // eslint-disable-line
-		let taggedArray = Object.values(this.state.tagged[dataId]);
-		let theOutput = taggedArray.map((tag, index) => { //eslint-disable-line
-				return (
-					<span key={index} className={styles.iconItem}>
-						<Icon icon={tag} size={40} key={index} />
-						<h5>{tag}</h5>
-					</span>
-				);
-			});
-		return theOutput;
-	}
-/*
-	getBeachTags2 = (dataId) => {
-		// console.log('this.state.tagged', this.state.tagged);
-		base.fetch(`tagged/${dataId}`, {
+	getAdditionalData = (orgId) => {
+		console.log('getAdditionalData triggerend with id of', orgId);
+		base.fetch(`orgs/${orgId}`, {
 		context: this,
-		asArray: true
+		asArray: false
 		}).then(data => {
-			console.log('got the tagged and data is, ', data);
-			let theOutput = data.map((tag, index) => { //eslint-disable-line
-				console.log('tag: ', tag);
-				return (
-					<span key={index}>
-						<Icon icon={tag} size={40} key={index} />
-						<h5>{tag}</h5>
-					</span>
-				);
+			console.log('retrieved data:', data);
+			console.log('this:', this);
+			this.setState({
+				additionalData: data,
+				loading: false
 			});
-			console.log('theOutput is: ', theOutput);
-			return (
-				<div>test</div>
-			);
+			console.log('the app data org is', data);
 		}).catch(error => {
-			console.log(error);
+			console.log('App error is', error);
+			console.log('the app data org is', error);
 		});
 	}
-*/
-	getImage = (item, dataId) => {
-		let theImages = Object.keys(item.images);
-		let theImageToReturn = theImages[0];
-		// console.log('theImages: ', theImages);
 /*
-		let theOutput = null;
-		if (theImages) {
-			theOutput = theImages.map((img, index) => { //eslint-disable-line
-				return (
-						<img
-						src={`https://res.cloudinary.com/thirdman-design/image/upload/c_limit,e_improve,w_300/obp/${dataId}/${theImageToReturn}.jpg`}
-						role="presentation"
-						key={index}
-						/>
-				);
+	setOrg = (orgId) => {
+		if (orgId) {
+			this.setState({
+				activeOrg: orgId
+			});
+			this.getData(orgId);
+		} else {
+			this.setState({
+				activeOrg: null
 			});
 		}
-		console.log(theOutput);
+	}
 */
-		return (
-			<img
-			src={`https://res.cloudinary.com/thirdman-design/image/upload/c_limit,e_improve,w_300/obp/${dataId}/${theImageToReturn}.jpg`}
-			role="presentation"
-			/>
-		);
-	};
-	doLoadingBeaches = () => {
+/*
+	getOrgs = () => {
+		console.log('getting orgs');
+		console.log('dataOrgs: ', dataOrgs.data);
+		const theData = dataOrgs.data;
+		const supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
+		const user = supportalStorage.user;
+		console.log('user', user);
+		this.setState({
+			orgs: theData
+		});
+	}
+*/
+		/*
+		client.get('/organisations').then((res) => {
+			console.log('got res: ', res);
+			this.updateOrgs(res.data);
+		}).catch((err) => {
+			this.updateError(err.errors[0]);
+		});
+*/
+/*
+		const request = superagent.get('https://dev-api.nomosone.com/v1/organisations')
+			// .send({ name: 'Manny', species: 'cat' })
+			// .set('X-API-Key', 'foobar')
+			// .set('Accept', 'application/json')
+			.set('authorisation', user.authorization)
+			.set('Content-Type', 'text/plain');
+			console.log(request);
+		request.end((err, res) => {
+			if (err) throw err;
+			console.log(res);
+		});
+*/
+	/* OLD THINGS */
+	doLoadingItems = () => {
 		let rows = [];
-		for (let i = 0; i < 6; i++) {
+		for (let i = 0; i < 3; i++) {
 			rows.push(
 				<div className={styles.beach} key={i}>
 					<LoadingAnimation isVisbile />
@@ -260,20 +389,6 @@ export default class Home extends Component {
 			);
 		}
 		return <section>{ rows }</section>;
-	}
-	setFilter = (filterName) => {
-		this.setState({ filter: filterName });
-	}
-	dynamicSort = (property) => {
-		let sortOrder = 1;
-		if (property[0] === '-') {
-			sortOrder = -1;
-			property = property.substr(1);
-		}
-		return function (a, b) {
-			let result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0; // eslint-disable-line
-			return result * sortOrder;
-		};
 	}
 	doTranstion = (page) => {
 		console.log(page);
@@ -297,28 +412,3 @@ export default class Home extends Component {
 		});
 	};
 }
-/*
-<span
-className={styles.button}
-onClick={() => this.doTranstion('/admin')}
->
-toggle loading
-</span>
-this state loading is: {this.state.loading ? 'true' : 'false'}
-this state transition is: {this.state.transition ? 'true' : 'false'}
-*/
-/*
-<Link to={'/admin'}>
-<span className={styles.button}>edit</span>
-</Link>
-*/
-/*
-									<span>
-										{item.tags ?
-											<div>
-												{this.getTags(item)}
-											</div>
-											: <span>no tags </span>
-										}
-									</span>
-*/

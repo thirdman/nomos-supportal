@@ -1,7 +1,5 @@
 export App from './App/App';
 
+export Admin from './Admin/Home';
 export Home from './Home/Home';
-export Beach from './Beach/Beach';
-export BeachEdit from './BeachEdit/BeachEdit';
-export BeachListing from './BeachListing/BeachListing';
-export AdminListing from './AdminListing/AdminListing';
+export Login from './Login/Login';

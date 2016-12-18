@@ -1,0 +1,88 @@
+/**
+ *  Define scss variables here.
+ *
+ */
+
+$nomosBlue: 					#4A90E2; 
+$nomosGreen: 					#68DA0E;
+$nomosLightGreen: 		#C1E7A4;
+$nomosRed: 						#eb5768;
+$nomosLightRed:				#EDBCC1;
+$nomosYellow: 				lighten(#fecd5f, 10%);
+$nomosYellowStrong:		#FFCA42;
+$nomosOrange: 				#EF7413; 
+
+$nomosGrey: 					#777; 
+$nomosDarkGrey:				#585859;
+$nomosLightGrey:			#ccc;
+$nomosLightLightGrey:	#F4F5F5;
+
+$nomosMidGrey:				#838989;
+$nomosBlack: 					#444545;
+$nomosDarkBlack: 			#231F20;
+$nomosHeader:				 	#616469;
+$nomosHeader: 				#585859;
+$nomosLine: 					#ddd;
+$nomosLine: 					#d6dbe3;
+
+$contentPadding: 			8px;
+$frameBorderRadius: 	6px;
+$internalBorderRadius:2px;
+
+$buttonBorderRadius: 	4px;
+$buttonColour: 				#76b8ea;
+
+
+
+/**
+ *  Fonts & Typography
+ */
+
+
+$sansSerifFontStack:  'Open Sans', Arial, sans-serif;
+$font-family-sans-serif: 'Open Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
+$nomos-font-family: 'Open Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-size-base: 			14px;
+$font-size-small: 		12px;
+$font-size-tiny: 			10px;
+$line-height-normal:	24px;
+
+/**
+ *  Layout
+ */
+$padding:							8px;
+$z-index-top: 				9999; 
+$z-index-first: 			1;
+$z-index-second: 			10;
+
+/**
+ *  lost Grid system
+ */
+@lost gutter 16px;
+
+/**
+* BREAKPOINTS MIXIN
+*/
+$breakpoints: (
+  'small'  	: ( min-width:  767px ),
+  'medium' 	: ( min-width:  992px ),
+  'large'  	: ( min-width: 1200px ),
+  'xlarge' 	: ( min-width: 1500px ),
+  'huge' 		: ( min-width: 1700px )
+);
+ 
+@mixin breakpoint($name) {
+  // If the key exists in the map
+  @if map-has-key($breakpoints, $name) {
+    // Prints a media query based on the value
+    @media #{inspect(map-get($breakpoints, $name))} {
+      @content;
+    }
+  }
+
+  // If the key doesn't exist in the map
+  @else {
+    @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
+        + "Please make sure it is defined in `$breakpoints` map.";
+  }
+}
