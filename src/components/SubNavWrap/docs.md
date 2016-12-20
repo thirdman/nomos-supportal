@@ -12,6 +12,7 @@ children				|	`oneOfType` | - 				| this component is designed to wrap around a 
 
 #### TODO
 
+* document dark and inset classes
 
 *****description*****
 <SubNavWrap />

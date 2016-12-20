@@ -76,7 +76,7 @@ export default class Button extends Component {
 						<Icon
 							icon="loading"
 							color="white"
-							source="icons/"
+							// source="icons/interface/"
 							classNameProps={['white']} />
 					</span>
 					: null

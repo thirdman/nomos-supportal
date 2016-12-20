@@ -1,0 +1,48 @@
+@import '../../global/global.scss';
+
+.UiOrgSelect{
+		display: block;
+		// transition: .3s transform ease;
+		animation: slideUp .7s ease-in-out;
+
+	////////////////////
+	///// CARD
+	////////////////////
+	.card{
+		width: 260px;
+		height: 300px;
+		border-radius: 4px;
+		background: #fff;
+		display: inline-block;
+		position: relative;
+		box-shadow: $cardShadow;
+		margin-right: 24px;
+		margin-bottom: 24px;
+		float: left;
+		&:hover{
+			box-shadow: $cardShadowHover;
+			cursor: pointer;
+		}
+		.cardImage{
+			width: 100%;
+			height: 100px;
+			background: #f9f9f9;
+			border-radius: 4px 4px 0 0;
+			text-align: center;
+			padding-top: 32px;
+		}
+		.cardContent{
+			padding: 8px;
+		}
+		.cardButton{
+			width: 32px;
+			height: 32px;
+			border-radius: 100%;
+			display: block;
+			position: absolute;
+			background: #eee;
+			bottom: 16px;
+			right: 16px;
+		}
+	}
+}

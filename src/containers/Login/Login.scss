@@ -1,9 +1,12 @@
-:root {
-  --fontSize: 1rem;
-}
+@import '../../global/global.scss';
+// 	:root {
+//  --fontSize: 1rem;
+// }
 .loginPage {
-		animation: slideUp .3s ease;
-
+	animation: slideUp .3s ease;
+	&.processing{
+		opacity: .3;
+	}	
 	//CONTAINER
 	.loginCard{
 		max-width: 800px;
@@ -32,46 +35,56 @@
 			lost-column: 7/12;
 			padding: 24px 16px;
 			background: #f9f9f9;
+			border-radius: 0 3px 3px 0;
 			border-left: 1px solid #eee;
 			height: 100%;
 			min-height: 260px;
-		}
-	}
-  input {
-    padding: 4px 8px 4px 0;
-    border: none;
-    border-bottom: 1px solid #ddd;
-    background: transparent;
-    margin: 0 8px 0 0;
-    width: 100%;
-    font-size: 1em;
-		//color: color(red alpha(-10%));
-		position: relative;
-		outline: none;
-    z-index: 1;
-		&:focus, &:valid{
-			outline: none;
-      ~ label {
-        color: #777;
-        transform: translate(-12%, -50%) scale(0.75);
+			&.errorInstructions{
+				color: #fff;
+				background: $nomosRed;
+				position: relative;
+				right: -1px;
+				h2{
+					color: #fff;
+				}
 			}
 		}
-		&:focus{
-			border-bottom: 1px solid #4A90E2;			
-		}
-		
-		~ label{
-			position: absolute;
-			top: 0;
-	    left: 0;
-	    color: #aaa;
+	  input {
+	    padding: 4px 8px 4px 0;
+	    border: none;
+	    border-bottom: 1px solid #ddd;
+	    background: transparent;
+	    margin: 0 8px 0 0;
+	    width: 100%;
 	    font-size: 1em;
-	    font-weight: normal;
-	    line-height: 1em;
-	    transition: 0.2s ease;
-	    padding: 8px 16px 8px 8px; 
-		}
-  }
+			//color: color(red alpha(-10%));
+			position: relative;
+			outline: none;
+	    z-index: 1;
+			&:focus, &:valid{
+				outline: none;
+	      ~ label {
+	        color: #777;
+	        transform: translate(-12%, -50%) scale(0.75);
+				}
+			}
+			&:focus{
+				border-bottom: 1px solid #4A90E2;			
+			}
+			
+			~ label{
+				position: absolute;
+				top: 0;
+		    left: 0;
+		    color: #aaa;
+		    font-size: 1em;
+		    font-weight: normal;
+		    line-height: 1em;
+		    transition: 0.2s ease;
+		    padding: 8px 16px 8px 8px; 
+			}
+	  }
+	}
 }	
 html{
 	min-height: 100%;
@@ -82,7 +95,7 @@ html{
 @keyframes slideUp {
     from {
      // opacity: 0;
-	    transform: translateY(5px);
+	    transform: translateY(24px);
     }
     to {
 	   // opacity: 0;

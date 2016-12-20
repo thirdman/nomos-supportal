@@ -1,0 +1,88 @@
+@import '../../global/global.scss';
+
+.Admin{
+	margin: 0;
+	animation: slideUp .5s ease-in-out;
+	.adminItem{
+		display: block;
+		padding: 8px;
+		border: 1px dotted #ccc;
+		margin-bottom: 8px;
+		width: 100%;
+		background: rgba(255,255,255,.6);
+		box-shadow: $cardShadow;
+		
+		&:hover{
+			background: #fff;
+			cursor: pointer;
+			box-shadow: $cardShadowHover;
+		}
+		.theButtons{
+			display: block;
+			position: relative;
+			width: 100%;
+			.iconWrap{
+				float: right;
+				width: 40px;
+				height: 40px;
+				border-radius: 100%;
+				border: 2px solid #7e7e7e;
+				padding: 12px;
+				margin-top: 8px;
+			}			
+		}
+	}
+	.additionalItem{
+		display: block;
+		width: 100%;	
+		border-bottom: 1px dashed #ccc;
+	}
+	.detailEdit{
+		display: block;
+		width: 100%;
+		margin: 16px 0;
+		border-radius: 4px;
+		background: #fff;
+		box-shadow: $cardShadow;
+		padding: 24px;
+		animation: slideUp .5s ease-in-out;
+		.colorDemo{
+			width: 32px;
+			height: 24px;
+			border: 2px solid white;
+			box-shadow: 0 0 5px -1px rgba(0,0,0,.5);
+			cursor: pointer;
+		}
+		.colorPickerWrap{
+			position: relative;
+			width: 20px;
+			height: 1px;
+			overflow: visible;
+		}
+		.exampleIconWrap{
+			width: 40px;
+			height: 40px;
+			display: block;
+			background: #ccc;
+			color: #fff;
+			text-align: center;
+			line-height: 40px;
+			font-size: 16px;
+			border-radius: 100%;
+			span{
+				
+			}
+		}
+	}
+}
+// SLIDE IN ANIMATION
+@keyframes slideUp {
+  from {
+   	opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+   	opacity: 1;
+    transform: translateY(0px);
+  }
+}

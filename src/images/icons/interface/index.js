@@ -27,6 +27,7 @@ export individual from './individual.svg';
 export information from './information.svg';
 export left from './left.svg';
 export link from './link.svg';
+export loading from './loading.svg';
 export management from './management.svg';
 export minusCircle from './minus-circle.svg';
 export minus from './minus.svg';

@@ -11,6 +11,7 @@ export default class SubNavWrap extends Component {
 		currentlySelected: PropTypes.number,
 		selected: PropTypes.string,
 		listData: PropTypes.array,
+		classNameProps: PropTypes.array,
 		children: PropTypes.oneOfType([
 			PropTypes.arrayOf(React.PropTypes.node),
 			PropTypes.node
@@ -21,11 +22,22 @@ export default class SubNavWrap extends Component {
 		const {
 			listData = [],
 			selected,
-			currentlySelected
+			currentlySelected,
+			classNameProps
 		} = this.props;
+		let classes;
+
+		classes = classNameProps
+			.filter((cName) => { return !!cName; })
+			.map((classV) => styles[classV]).join(' ');
+
 		console.log('currently selected: ', currentlySelected);
 		return (
-			<ul className={styles.SubNavWrap}>
+			<ul
+				className={
+					cx(styles.SubNavWrap,
+					classes
+					)}>
 				{listData && listData.map(({link, name, label, isDisabled}, index) =>
 					(<Link
 						to={link}

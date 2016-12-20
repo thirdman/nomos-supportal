@@ -68,4 +68,15 @@
 			}
 		}
 	}
+	&.dark{
+		a{
+			color: $nomosBlack;
+			li{
+				border-bottom: 1px dashed $nomosLightGrey;
+			}
+		}
+	}
+	&.inset{
+		left: -4px;
+	}
 }

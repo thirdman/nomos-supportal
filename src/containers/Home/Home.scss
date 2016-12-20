@@ -28,6 +28,10 @@ section{
   position: relative;
   display: block;
   width: 100%;
+	animation: slideUp .5s ease-in-out;
+	h2{
+		margin-bottom: 0;
+	}
 	// padding: 32px;
 	.filterControl{
 		text-align: left;
@@ -238,4 +242,16 @@ section{
 		height: 100%;
 		width: auto;
 	}
+}
+
+// SLIDE IN ANIMATION
+@keyframes slideUp {
+  from {
+   	opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+   	opacity: 1;
+    transform: translateY(0px);
+  }
 }

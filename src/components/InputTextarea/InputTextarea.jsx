@@ -29,7 +29,7 @@ export default class InputTextarea extends Component {
 			hasRequiredIcon = true,
 			hasError = false,
 			onKeyDownProps,
-			// onChangeProps,
+			// onChangeProps
 			} = this.props;
 
 		let classes = classNameProps;
@@ -109,9 +109,15 @@ export default class InputTextarea extends Component {
 
 	doContentChange = () => {
 		if (this.textInput.value.length > 0) {
-			this.setState({hasContent: true});
+			this.setState({
+				hasContent: true,
+				textValue: this.textInput.value
+			});
 		} else {
-			this.setState({hasContent: false});
+			this.setState({
+				hasContent: false,
+				textValue: this.textInput.value
+			});
 		}
 	}
 

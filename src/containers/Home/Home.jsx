@@ -14,16 +14,19 @@ import {
 	// Icon,
 	LoadingAnimation,
 	ObjectInfo,
+	ProgressBar,
 	Row,
 	Statistic,
+	Section,
 	SubNavWrap,
 	TransitionAnimation,
 	} from 'components';
+import { Chat } from 'containers';
 
-const dataDetail = require('./data/dataDetail.js');
+// const dataDetail = require('./data/dataDetail.js');
 const styles = require('./Home.scss');
 const Rebase = require('re-base');
-// const client = require('../../helpers/ApiClient.js');
+const client = require('../../helpers/ApiClient.js');
 
 const base = Rebase.createClass({
   apiKey: 'AIzaSyBLhVms5SJQKFQyAN4p6jUnJsukXhAXKH8',
@@ -36,41 +39,59 @@ const base = Rebase.createClass({
 export default class Home extends Component {
 	state = {
 		// org: this.props.org,
-		activeOrg: this.props.activeOrg,
-		orgData: dataDetail[this.props.activeOrg.id],
-		activeOrgDataId: null,
+		// activeOrg: this.props.activeOrg,
+		// orgData: (this.props.activeOrg ? dataDetail[this.props.activeOrg.id] : null),
+		activeOrgDataId: this.props.params.dataId,
 		loading: true,
 		transition: false,
+		additionalDataLoading: false,
 		activeIndex: this.props.activeIndex
 	}
 	componentWillMount() {
+		// THINGS TO DO
+		// get orgs.
+		// set orgs to state?
+		// get additional data
+		// set additonal data
+		// show the org select screen
+		// on select, set active org Id and data
+		// set active additonal id and data
+		// transition to full page
+		// set active subcontent to overview
 		// this.setupPage();
 		console.log('home will mount');
+		if (this.props.params.sectionId) {
+			console.log('sectionId Exists:', this.props.params.sectionId);
+			} else {
+			console.log('sectionId does not exist:');
+		}
+		this.setupPage(this.props.params.dataId);
 		// console.log(dataDetail);
 	}
 	componentDidMount() {
-		this.getAdditionalData(this.props.activeOrg.id);
+		if	(this.state.activeOrgDataId) {
+			this.getAdditionalData(this.state.activeOrgDataId);
+		}
 		this.toggleLoading();
 	}
 
 	render() {
-		const { activeOrg, activeOrgDataId } = this.state;
+		const { activeOrg, activeOrgDataId, agreements, users} = this.state;
 		// console.log(activeOrgDataId, activeOrg);
 		// console.log('home params', this.props.params);
 		console.log('home props', this.props);
 		console.log('home state', this.state);
 		// const supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
 		// const user = supportalStorage.user;
-		const agreements = this.state.orgData.agreements.data;
-		const users = this.state.orgData && this.state.orgData.users.data;
-		const activeAgreements = _.filter(agreements, function (o) { //eslint-disable-line
+		// let agreements = this.state.orgAgreements;
+		// let users = this.state.orgUsers && this.state.orgUsers.data;
+		let activeAgreements = _.filter(agreements, function (o) { //eslint-disable-line
 			return o.attributes.agreementMode === 'Active';
 			});
-		const leaseAgreements = _.filter(agreements, function (o) { //eslint-disable-line
+		let leaseAgreements = _.filter(agreements, function (o) { //eslint-disable-line
 			return o.attributes.agreementType === 'Lease';
 			});
-		// console.log(activeAgreements);
-		// console.log(leaseAgreements);
+		console.log(leaseAgreements);
 		let tempCss = {
 			backgroundColor: (
 			this.state.additionalData &&
@@ -88,86 +109,48 @@ export default class Home extends Component {
 							: null
 						}
 					</Row>
-				<Row>
-					<Column occupy={12}>
-						{activeOrg ?
-							<h2>
-							<span className={styles.orgIconWrap} style={tempCss}>
-								<Avatar
-									size="medium"
-									type="organisation"
-									title={activeOrg.attributes.knownAs}
-									defaultIconColor="#eee"
-									/>
-								</span>
-								{activeOrg.attributes.knownAs}
-							</h2>
-							: <h2>Home</h2>
-						}
-						<HorizontalRule color={'#ccc'} />
-						{this.state.activeOrgDataId ?
-							<span>active orgid: {activeOrgDataId}</span>
-							: null
-						}
-						{activeOrg ?
-							<span>
-								<Row>
-									<Column occupy={3}>
-										<h4>Organisation Status</h4>
-										<span>{activeOrg.attributes.organisationStatus}</span>
-									</Column>
-									<Column occupy={3}>
-										<h4>Created</h4>
-										<span>
-											{moment(activeOrg.attributes.audit.insertedDate).format('DD MMM, YYYY')}
-										</span>
-									</Column>
-									<Column occupy={3}>
-										<h4>Last Edited</h4>
-										<span>
-											{moment(activeOrg.attributes.audit.updatedDate).format('DD MMM, YYYY')}
-										</span>
-									</Column>
-									<Column occupy={3}>
-										<h4>Currency</h4>
-										<span>{activeOrg.attributes.defaultCurrency}</span>
-									</Column>
-								</Row>
-								<Row>
-									<Column occupy={3}>
-										<h4>Contact Name</h4>
-										<span>{activeOrg.attributes.contactDetails.contact}</span>
-									</Column>
-									<Column occupy={3}>
-										<h4>Contact Email</h4>
-										<span>{activeOrg.attributes.contactDetails.email}</span>
-									</Column>
-									<Column occupy={3}>
-										<h4>Contact phone</h4>
-										<span>{activeOrg.attributes.contactDetails.phone}</span>
-									</Column>
-									<Column occupy={3}>
-										<h4>Website</h4>
-										<span>{activeOrg.attributes.website}</span>
-									</Column>
-								</Row>
+{!this.state.loading ?
+	<span>
+			<Row>
+				<Column occupy={10}>
+					{activeOrg ?
+						<h2>
+						<span className={styles.orgIconWrap} style={tempCss}>
+							<Avatar
+								size="medium"
+								type="organisation"
+								title={activeOrg && activeOrg.attributes.knownAs}
+								defaultIconColor="#eee"
+								/>
 							</span>
-							: null
-						}
-					</Column>
-				</Row>
-			<HorizontalRule color="#ccc" />
+							{activeOrg.attributes.knownAs}
+						</h2>
+						: <h2>Home</h2>
+					}
+				</Column>
+				<Column occupy={2}>
+					{activeOrg &&
+						<span>
+							<h4>Organisation Status</h4>
+							<span>{activeOrg.attributes.organisationStatus}</span>
+						</span>
+					}
+				</Column>
+			</Row>
+			<HorizontalRule color="black" />
 			<Row>
 				<Column occupy={3}>
 					<Row>
 						<SubNavWrap
 							currentlySelected={1}
-							selected={'Overview'}
+							selected={this.props.params.sectionId || 'overview'}
+							classNameProps={['dark', 'inset']}
 							listData={[
-								{label: 'Overview', link: `${location.pathname}/overview`},
-								{label: 'Agreements', link: `${location.pathname}/agreements`},
-								{label: 'Account', link: `${location.pathname}/account`},
-								{label: 'Files', link: `${location.pathname}/files`}
+								{label: 'Overview', link: `/home/${this.props.params.dataId}/overview`, name: 'overview'}, //eslint-disable-line
+								{label: 'Agreements', link: `/home/${this.props.params.dataId}/agreements`, name: 'agreements'}, //eslint-disable-line
+								{label: 'Account', link: `/home/${this.props.params.dataId}/account`, name: 'Account'}, //eslint-disable-line
+								{label: 'Files', link: `/home/${this.props.params.dataId}/files`, name: 'files'}, //eslint-disable-line
+								{label: 'Messages', link: `/home/${this.props.params.dataId}/messages`, name: 'messages'} //eslint-disable-line
 							]}
 						/>
 					</Row>
@@ -176,7 +159,7 @@ export default class Home extends Component {
 						<h4>Users</h4>
 						{users && users.map((item, index) => {
 							return (
-								<div className={styles.userItem} key={index}>
+								<div className={styles.userItem} key={index} style={{width: '100%'}}>
 									<Avatar
 										size="small"
 										type="user"
@@ -191,9 +174,9 @@ export default class Home extends Component {
 						})
 						}
 						{this.state.additionalData ?
-							(<span>
+							(<div>
 								<h4>Support Team</h4>
-								<div className={styles.userItem}>
+								<div className={styles.userItem} style={{width: '100%'}}>
 									<Avatar
 										size="small"
 										type="user"
@@ -205,12 +188,12 @@ export default class Home extends Component {
 										{this.state.additionalData.rep}
 									</span>
 								</div>
-							</span>
+							</div>
 							)
 							: null
 						}
 					</Row>
-					{this.state.additionalData ?
+					{this.state.additionalData && 'ggg' === 'bbb' ?
 						(<span className={styles.additionalData}>
 							<h3>Additional Data</h3>
 							<Row>
@@ -235,83 +218,235 @@ export default class Home extends Component {
 						)
 						: null
 					}
-					{!this.state.additionalData ?
-						<span>loading additional content...</span>
+					{this.state.additionalDataLoading ?
+						<span><LoadingAnimation /> loading additional content...</span>
 						: null
 					}
 				</Column>
 				<Column occupy={9}>
-					<h3>Agreements</h3>
-						{this.state.orgData ?
-							<Row>
-								<Column occupy={3}>
-									<Statistic
-										content={agreements.length}
-										title="Agreements"
-										isAnimated
-										hasDivider />
-								</Column>
-								<Column occupy={3}>
-									<Statistic
-										content={activeAgreements.length}
-										title="Active"
-										isAnimated
-										hasDivider />
-								</Column>
-								<Column occupy={3}>
-									<Statistic
-										content={agreements.length - activeAgreements.length}
-										title="Inactive"
-										isAnimated
-										hasDivider />
-								</Column>
-								<Column occupy={3}>
-									{this.state.additionalData ?
-										<Statistic
-										content={this.state.additionalData.projectedAgreementCount}
-										title="Projected Agreements"
-										isAnimated
-										hasDivider />
-										:
-										<Statistic
-										content={users.length}
-										title="Users"
-										isAnimated
-										hasDivider />
-									}
-								</Column>
-							</Row>
-							: null
-						}
-					<Row>
-						{agreements && agreements.map((item, index) => {
-							return (
-								<div className={styles.agreementItem} key={index}>
-									<ObjectInfo
-										title={item.attributes.knownAs}
-										id={(item.id).toString()}
-										type={'agreement'}
-										subType={item.attributes.agreementType}
-										// classNameProps={[item.attributes.agreementMode ? 'isInactive' : '']}
-										display="small" />
-								</div>
-							);
-						})
-						}
-					</Row>
+					{!this.props.params.sectionId || this.props.params.sectionId === 'overview' ?
+						<Section classNameProps={['isAnimated']} isAnimated>
+							<Section title="Onboarding Progress">
+							{agreements && agreements.length > 0 && this.state.additionalData ?
+								<ProgressBar
+									completed={agreements && (agreements.length / this.state.additionalData.projectedAgreementCount) * 100} // eslint-disable-line
+									hasPadding />
+								:
+								<ProgressBar completed={agreements && (activeAgreements.length / agreements.length) * 100} hasPadding /> // eslint-disable-line
+							}
+							</Section>
+							<Section title="Agreements" hasDivider>
+								{agreements ?
+									<Row>
+										<Column occupy={3}>
+											{agreements ?
+											<Statistic
+												content={agreements && agreements.length}
+												title="Agreements"
+												isAnimated
+												hasDivider />
+												: null }
+										</Column>
+										<Column occupy={3}>
+											<Statistic
+												content={agreements && activeAgreements.length}
+												title="Active"
+												isAnimated
+												hasDivider />
+										</Column>
+										<Column occupy={3}>
+											{agreements ?
+												<Statistic
+													content={agreements && (agreements.length - activeAgreements.length)}
+													title="Inactive"
+													isAnimated
+													hasDivider />
+												: null }
+										</Column>
+										<Column occupy={3}>
+											{this.state.additionalData ?
+												<Statistic
+												content={this.state.additionalData &&
+													this.state.additionalData.projectedAgreementCount}
+												title="Projected Agreements"
+												isAnimated
+												hasDivider />
+												:
+												<Statistic
+												content={users && users.length}
+												title="Users"
+												isAnimated
+												hasDivider />
+											}
+										</Column>
+									</Row>
+									: null
+								}
+							</Section>
+							<Section title="Account" hasDivider>
+								{activeOrg ?
+									<Row>
+										<Column occupy={3}>
+											{agreements ?
+											<Statistic
+												title="Created"
+												content={moment(activeOrg.attributes.audit.insertedDate).format('DD MMM, YYYY')} //eslint-disable-line
+												// isAnimated
+												hasDivider />
+												: null }
+										</Column>
+										<Column occupy={3}>
+											<Statistic
+												title="Updated"
+												content={(moment(activeOrg.attributes.audit.updatedDate).format('DD MMM, YYYY')).toString()} //eslint-disable-line
+												// isAnimated
+												hasDivider />
+										</Column>
+										<Column occupy={3}>
+												<Statistic
+													content={users && users.length}
+													title="Users"
+													isAnimated
+													hasDivider />
+										</Column>
+										<Column occupy={3}>
+											{this.state.activeOrgDataId &&
+												<Statistic
+												content={activeOrgDataId}
+												title="Organisation Id"
+												hasDivider />
+											}
+										</Column>
+									</Row>
+									: null
+								}
+								</Section>
+						</Section>
+						: null
+					}
+					{this.props.params.sectionId && this.props.params.sectionId === 'agreements' ?
+						<Section title="Agreements">
+							{agreements && agreements.map((item, index) => {
+								return (
+									<div className={styles.agreementItem} key={index}>
+										<ObjectInfo
+											title={item.attributes.knownAs}
+											id={(item.id).toString()}
+											type={'agreement'}
+											subType={item.attributes.agreementType}
+											// classNameProps={[item.attributes.agreementMode ? 'isInactive' : '']}
+											// display="small"
+											/>
+									</div>
+								);
+							})
+							}
+						</Section>
+						: null
+					}
+					{this.props.params.sectionId && this.props.params.sectionId === 'account' ?
+						<Section title="Account">
+							{activeOrg ?
+								<span>
+									<Row>
+										<Column occupy={3}>
+											<h4>Contact Name</h4>
+											<span>{activeOrg.attributes.contactDetails.contact}</span>
+										</Column>
+										<Column occupy={3}>
+											<h4>Contact Email</h4>
+											<span>{activeOrg.attributes.contactDetails.email}</span>
+										</Column>
+										<Column occupy={3}>
+											<h4>Contact phone</h4>
+											<span>{activeOrg.attributes.contactDetails.phone}</span>
+										</Column>
+										<Column occupy={3}>
+											<h4>Website</h4>
+											<span>{activeOrg.attributes.website}</span>
+										</Column>
+									</Row>
+								</span>
+								: null
+							}
+						</Section>
+						: null
+					}
+					{this.props.params.sectionId && this.props.params.sectionId === 'files' ?
+						<Section title="Files">
+							<span>Files will be here</span>
+						</Section>
+						: null
+					}
+					{this.props.params.sectionId && this.props.params.sectionId === 'messages' ?
+						<Section title="Messages">
+							<Chat orgId={1} />
+						</Section>
+						: null
+					}
+
 				</Column>
 			</Row>
+	</span>
+	:
 			<section>
-				{this.state.loading ?
-						(this.doLoadingItems())
-					: null
-				}
-				</section>
+				(this.doLoadingItems())
+			</section>
+	}
 			</div>
     );
   }
+  setupPage = (dataId) => {
+		console.log('setting up page with id of: ', dataId);
+		if (!dataId) {
+			browserHistory.push('/login');
+			return false;
+		}
+		const supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
+		const theOrgs = supportalStorage.orgs;
+		// const activeOrgId = supportalStorage.activeOrgId;
+		let thisOrg;
+		const thisthing = theOrgs.map((item, index) => { // eslint-disable-line
+			if (item.id === parseFloat(dataId)) {
+				thisOrg = item;
+			}
+		});
+		this.setState({
+			orgs: theOrgs,
+			// activeOrgDataId: activeOrgId,
+			activeOrg: thisOrg,
+			orgData: thisOrg
+		});
+		this.getOrgData(dataId);
+  }
+	getOrgData = (orgId) => {
+		this.setState({loading: true});
+		client.get(`/organisations/${orgId}/agreements`).then((res) => {
+			console.log('res is: ', res);
+			// this.updateOrgs(res.data);
+			this.setState({
+				agreements: res.data,
+				loading: false
+				});
+		}).catch((err) => {
+			this.updateError(err.errors[0]);
+		});
+		client.get(`/organisations/${orgId}/users`).then((res) => {
+			console.log('res is: ', res);
+			// this.updateOrgs(res.data);
+			this.setState({
+				users: res.data
+				});
+		}).catch((err) => {
+			this.updateError(err.errors[0]);
+		});
+	}
+
 	getAdditionalData = (orgId) => {
 		console.log('getAdditionalData triggerend with id of', orgId);
+		this.setState({
+			additionalDataLoading: true,
+		});
 		base.fetch(`orgs/${orgId}`, {
 		context: this,
 		asArray: false
@@ -320,10 +455,15 @@ export default class Home extends Component {
 			console.log('this:', this);
 			this.setState({
 				additionalData: data,
+				additionalDataLoading: false,
 				loading: false
 			});
 			console.log('the app data org is', data);
 		}).catch(error => {
+			this.setState({
+				additionalDataLoading: false,
+				loading: false
+			});
 			console.log('App error is', error);
 			console.log('the app data org is', error);
 		});

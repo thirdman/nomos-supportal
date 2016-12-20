@@ -1,72 +1,99 @@
-import { Component } from 'react';
-import { Button, Icon, IconImage } from 'components';
+import React, { Component } from 'react';
+import { Button, Icon, Avatar } from 'components';
 import cx from 'classnames';
-import { autobind } from 'core-decorators';
-import { connect } from '../../../utils/state';
+import { browserHistory } from 'react-router';
+// import { autobind } from 'core-decorators';
+// import { connect } from '../../../utils/state';
 
 const styles = require('./UiUserMenu.scss');
-const globalStyles = require('../../pages/App/App.scss');
 
-@connect('store')
+// @connect('store')
 export default class UiUserMenu extends Component {
 
 	state = {
-		isOpen: false
+		isOpen: false,
+		user: this.props.user
 	};
-
-	@autobind
-	toggleOpen() {
-		this.setState({ isOpen: !this.state.isOpen});
+	componentWillMount() {
+		// console.log('usermenu mounting...');
 	}
 
 	render() {
-		const { auth } = this.context.store;
-		const { isOpen } = this.state;
-
+		// const { auth } = this.context.store;
+		const { isOpen, user } = this.state;
+		// console.log(user, isOpen);
+		// console.log(Button, isOpen);
 		return (
 			<div className={styles.UiUserMenu}>
-				<div className={styles.user}>
-					{auth.check &&
-						<div className={styles.loggedIn}>
-							<div
-								onClick={this.toggleOpen}
-								className={cx(
-									styles.iconWrap,
-									(this.state.isOpen ? styles.isOpen : ''))}>
-								<IconImage
-									iconType="user"
-									imageUrl="http://keenthemes.com/preview/metronic/theme/assets/pages/media/profile/profile_user.jpg"
-									size="large"
-									classNameProps={['medium', 'fill']} />
-							</div>
-							{isOpen ?
-								<div className={styles.actionItems}>
-									<div className={styles.triangle} />
-									<div className={styles.userActionHeader}>
-										<h4 className={globalStyles.subtitle}>USER</h4>
-										<span className={styles.userNameText} >{auth.user.username}</span>
-									</div>
-									<Button
-										key={'option-profile'}
-										content={'Profile'}
-										classNameProps={['btn', 'text', 'actionItem']} />
-									<Button
-										key={'option-logout'}
-										content={'Log out'}
-										classNameProps={['btn', 'text', 'actionItem']} />
-								</div>
-								: null
-							}
-							<span className={styles.arrowWrap} onClick={this.toggleOpen}>
-								{isOpen ?
-									<Icon icon="chevron-up" color="grey" />
-									: <Icon icon="chevron-down" color="grey" />
-								}
-							</span>
-						</div>
-					}
+				<div
+					className={cx(
+						styles.iconWrap,
+						(this.state.isOpen ? styles.isOpen : ''))}
+					onClick={this.toggleOpen}
+				>
+					<Avatar
+						iconType="user"
+						// imageUrl="http://keenthemes.com/preview/metronic/theme/assets/pages/media/profile/profile_user.jpg"
+						size="large"
+						title={user && user.username}
+						classNameProps={['medium', 'fill']} />
 				</div>
+				<span className={styles.arrowWrap} onClick={this.toggleOpen}>
+					{isOpen ?
+						<Icon icon="chevron-up" color="black" size={12} />
+						: <Icon icon="chevron-down" color="blue" size={12} />
+					}
+				</span>
+				{isOpen &&
+					<div className={styles.actionItems}>
+						<div className={styles.triangle} />
+							<div className={styles.userActionHeader}>
+								<h4 className={styles.subtitle}>USER</h4>
+								<span className={styles.userNameText} >{user && user.username}</span>
+							</div>
+								<Button
+									key={'optionProfile'}
+									content={'Profile'}
+									classNameProps={['btn', 'text', 'actionItem']} />
+								<Button
+									key={'optionLogout'}
+									content={'Log out'}
+									onClickProps={this.logout}
+									classNameProps={['btn', 'text', 'actionItem']} />
+					</div>
+				}
 			</div>
 		);
 	}
+
+	toggleOpen = () => {
+		// console.log(this.state);
+		this.setState({ isOpen: !this.state.isOpen});
+	}
+	logout = () => {
+		const tempObject = {user: null};
+		localStorage.setItem('nomosSupportal', JSON.stringify(tempObject));
+		browserHistory.push('/login');
+	}
 }
+// {user.username}
+/*
+						{isOpen ?
+							<div className={styles.actionItems}>
+								<div className={styles.triangle} />
+								<div className={styles.userActionHeader}>
+									<h4 className={styles.subtitle}>USER</h4>
+									<span className={styles.userNameText} >aaa</span>
+								</div>
+								<Button
+									key={'option-profile'}
+									content={'Profile'}
+									classNameProps={['btn', 'text', 'actionItem']} />
+								<Button
+									key={'option-logout'}
+									content={'Log out'}
+									classNameProps={['btn', 'text', 'actionItem']} />
+							</div>
+							: null
+						}
+*/

@@ -67,6 +67,9 @@
     }
     .headerItem{
 	    padding: 8px;
+	    &.hamburgerWrap{
+		    padding: 16px;
+	    }
     }
 	}
 	// @lost flexbox flex;
@@ -86,6 +89,11 @@
 		z-index: 2;
 		position: relative;
 		padding: 0 32px;
+	}
+	.orgNav{
+		display: block;
+		// transition: .3s transform ease;
+		animation: slideUp .7s ease-in-out;
 	}
 	////////////////////
 	///// CARD
@@ -112,7 +120,6 @@
 			border-radius: 4px 4px 0 0;
 			text-align: center;
 			padding-top: 32px;
-			background: #ccc;
 		}
 		.cardContent{
 			padding: 8px;
@@ -129,4 +136,17 @@
 		}
 	}
 
+}
+
+
+// SLIDE IN ANIMATION
+@keyframes slideUp {
+  from {
+   	opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+   	opacity: 1;
+    transform: translateY(0px);
+  }
 }

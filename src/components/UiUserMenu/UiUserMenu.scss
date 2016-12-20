@@ -7,6 +7,31 @@
   padding: 0;
   position: relative;
 	text-align: left;
+	float: right;
+	margin-right: 8px;
+	.iconWrap{
+    width: 32px;
+    height: 32px;
+    display: inline-block;
+    vertical-align: middle;
+    // background: $nomosGrey;
+    // padding: 3px;
+    border-radius: 30px;
+    cursor: pointer;
+    &.isOpen{
+	    // box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.3) inset;
+	    box-shadow: 0 0 5px 3px rgba(255,255,255, 0.3) inset;
+    }
+	}
+	.arrowWrap{
+		width: 10px;
+		margin-left: 2px;
+		height: 32px;
+		display: inline-block;
+		vertical-align: middle;	
+		padding-top: 10px;
+	}
+
 	.user{
 		color: $nomosBlack;
 		position: absolute;
@@ -15,28 +40,6 @@
 		line-height: 30px;
 		.loggedIn{
 			height: 32px;
-			.iconWrap{
-		    width: 32px;
-		    height: 32px;
-		    display: inline-block;
-		    vertical-align: middle;
-		    background: $nomosGrey;
-		    padding: 3px;
-		    border-radius: 30px;
-		    cursor: pointer;
-		    &.isOpen{
-			    background: $nomosLightGrey;
-			    padding: 3px;
-			    box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.3) inset;
-		    }
-			}
-			.arrowWrap{
-				width: 10px;
-				margin-left: 2px;
-				height: 32px;
-				display: inline-block;
-				vertical-align: middle;	
-			}
 		}
 		.userNameText{
 			padding: 0;
@@ -52,7 +55,7 @@
 		background: #fff;
 		box-shadow: 0 1px 16px -5px rgba(0, 0,0, .35);
 		border-radius: 4px;
-		z-index: 1;
+		z-index: 99;
 		line-height: 32px;
 		.userActionHeader{
 			position: relative;

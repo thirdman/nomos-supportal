@@ -53,7 +53,7 @@ export default class Icon extends Component {
 		let tempOpacity = this.state.isHovered ? 0.8 : 1;
 
 		if (icon === 'loading') {
-			source = 'icons/';
+			source = 'icons/interface/';
 		}
 		if (borderColor || size) {
 			tempStyle = {

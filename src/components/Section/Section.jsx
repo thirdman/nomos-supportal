@@ -38,6 +38,7 @@ export default class Section extends Component {
 			hasBorder,
 			hasMargin,
 			hasPadding,
+			isAnimated,
 			isLoading,
 			loadingMessage,
 			isError,
@@ -56,6 +57,7 @@ export default class Section extends Component {
 			[styles.hasBackground]: hasBackground,
 			[styles.hasPadding]: hasPadding,
 			[styles.hasMargin]: hasMargin,
+			[styles.isAnimated]: isAnimated,
 			[styles.hasBorder]: hasBorder
 		});
 

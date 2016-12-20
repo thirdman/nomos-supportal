@@ -1,13 +1,17 @@
 @import '../../global/global.scss';
 
 .Section{
+	animation: animateIn .3s ease-in-out;
 	position: relative;
+	+ .Section{
+		// background: pink;
+	}
 	.contentTitle{ 
 		padding: 8px 0 0;
 	}
 	.contentSubtitle{
 		padding: 8px 0;
-		}
+	}
 	.contentDescription{
 		padding: 8px 0;
 		font-size: $font-size-small;
@@ -80,6 +84,9 @@
 	&.hasMargin{
 		margin-top: 16px;
 		margin-bottom: 16px;
+	}
+	&.isAnimated{
+		animation: .3s animateIn ease-in-out;
 	}
 	//MISC PROPS
 	&.normal{
@@ -244,7 +251,17 @@
     transform: rotate(359deg);
  }
 }
-
+// SLIDE IN ANIMATION
+@keyframes animateIn {
+  from {
+   	opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+   	opacity: 1;
+    transform: translateY(0px);
+  }
+}
 /*
 @keyframes foldIn {
   0% {

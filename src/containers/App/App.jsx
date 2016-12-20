@@ -2,14 +2,16 @@ import React, { Component, PropTypes } from 'react';
 import { browserHistory } from 'react-router';
 import {
 	Avatar,
-	Button,
+	// Button,
 	Column,
 	// HorizontalRule,
-	InputSelect,
 	IconHamburger,
 	Row,
-	LoadingAnimation } from 'components';
-import { Home } from 'containers';
+	LoadingAnimation,
+	UiOrgSelect,
+	UiUserMenu
+	} from 'components';
+// import { Home } from 'containers';
 import { dataOrgs } from './data/orgData.js';
 // import firebase from 'firebase';
 // import Rebase from 're-base';
@@ -38,34 +40,36 @@ export default class App extends Component {
 		this.setupData();
 	}
 	componentDidMount() {
-		// this.getAdditionalData(this.props.activeOrg.id);
+		this.getAllAdditionalData();
 	}
 	render() {
-		const { routeParams } = this.props;
-		console.log('App Props', this.props);
-		console.log('App params', this.props.params);
-		console.log('routeParams', routeParams);
+		// const { routeParams } = this.props;
+		// console.log('# App Props', this.props);
+		// console.log('App params', this.props.params);
+		// console.log('routeParams', routeParams);
 		const { activeOrg, orgs } = this.state;
 		// const orgData = this.props.params;
-		console.log('state orgs is', orgs);
+		// console.log('# state orgs is', orgs);
 		const supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
 		const user = supportalStorage.user;
 		// const orgs = supportalStorage.orgs;
 		// this.setState({orgs});
+		// console.log('appuser: ', user);
 		// console.log('orgs: ', orgs);
-/*
+		// console.log('this.state: ', this.state);
+		// console.log('this.props: ', this.props);
 		let childrenWithProps = React.cloneElement(
 			this.props.children, {
 				orgs: this.state.orgs
 				}
 			);
-*/
-		// let orgListArray = [];
+/*
 		let orgList = orgs && orgs.map((item) => {
 				return item.attributes.knownAs;
 		});
+*/
 		let tempCss = {
-			backgroundColor: (this.state.org && this.state.org.color) || 'transparent'
+			backgroundColor: (this.state.org && this.state.org.color) || ''
 		};
 		return (
 			<div
@@ -87,27 +91,17 @@ export default class App extends Component {
 				<div className={styles.topBar}>
 					<Row>
 						<Column occupy={2}>
-							<span className={styles.headerItem}>
+							<span className={`${styles.headerItem} ${styles.hamburgerWrap}`}>
 							{orgs ?
-								(
-								<InputSelect
-									content="org"
-									color="white"
-									classNameProps={['normal']}
-									// options={['one', 'two', 'three']}
-									options={orgList}
-									btnClassNameProps={['select', 'btn', 'white']}
-									/>
-								)
-								:
-									<span>no orgs</span>
+								<IconHamburger
+									width={16}
+									height={15}
+									// menuClicked={this.toggleOrgMenu}
+									menuClicked={this.doOrgs}
+									isOpen={this.state.orgMenu}
+								/>
+								: null
 							}
-							<IconHamburger
-								width={16}
-								height={15}
-								menuClicked={this.toggleOrgMenu}
-								isOpen={this.state.orgMenu}
-							/>
 							</span>
 						</Column>
 						<Column occupy={8}>
@@ -117,15 +111,10 @@ export default class App extends Component {
 							<span className={styles.headerItem}>
 							{user ?
 								(<span>
-									<Avatar
-										size="small"
-										type="user"
-										title="example gb"
-									/>
-										{user.username}
+									<UiUserMenu user={user} logout={this.logout} />
 									</span>
 								)
-								: 'no user'
+								: null
 							}
 							</span>
 						</Column>
@@ -133,19 +122,11 @@ export default class App extends Component {
 				</div>
 				<div className={styles.appContent}>
 					<Row>
-						{!orgs ?
-							<span>
-								<div>
-									<Button
-										content="Get orgs"
-										onClickProps={this.getOrgs}
-									/>
-								</div>
-							</span>
-							: null
+						{this.state.orgMenu &&
+							<UiOrgSelect organisationData={this.state.orgs} onClickProps={this.toggleOrgMenu} />
 						}
-						{orgs && !activeOrg ?
-							<span>
+						{user && !activeOrg && 'ggg' === 'sss' ?
+							<div className={styles.orgNav}>
 								{
 									orgs.map((item, index) => (
 										<div
@@ -164,31 +145,29 @@ export default class App extends Component {
 											<div className={styles.cardContent}>
 												<div className={styles.cardButton} />
 												<h3>{item.attributes.knownAs}</h3>
-												<span className={styles.subtitle}>subtitle {item.id}</span>
+												<span className={styles.subtitle}>Id: {item.id}</span>
 											</div>
 										</div>
 									))
 								}
-							</span>
-							: null
-						}
-						{user && activeOrg ?
-							<Home
-								activeIndex={this.state.activeIndex}
-								activeOrg={orgs[this.state.activeIndex]}
-							/>
+							</div>
 							: null
 						}
 					</Row>
+					<span>
+						{childrenWithProps}
+					</span>
 					<div className={styles.footer} />
 				</div>
 			</div>
 		);
 	}
 	setupData = () => {
-		const theData = dataOrgs.data;
+		const supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
+		const theOrgs = supportalStorage.orgs;
+		// const theData = dataOrgs.data;
 		this.setState({
-			orgs: theData
+			orgs: theOrgs
 		});
 	}
 	getOrgs = () => {
@@ -208,7 +187,7 @@ export default class App extends Component {
 				activeIndex: index,
 				orgMenu: false
 			});
-			this.getData(orgId);
+			this.getAllAdditionalData();
 			browserHistory.push(`/home/${orgId}`);
 		} else {
 			this.setState({
@@ -217,45 +196,37 @@ export default class App extends Component {
 			});
 		}
 	}
+	logout = () => {
+		const tempObject = {user: null};
+		localStorage.setItem('nomosSupportal', JSON.stringify(tempObject));
+		browserHistory.push('/login');
+	}
+
 	toggleOrgMenu = () => {
 		this.setState({
 			orgMenu: !this.state.orgMenu,
-			activeOrg: this.state.activeOrg ? null : this.state.activeOrg
+			// activeOrg: this.state.activeOrg ? null : this.state.activeOrg
 		});
 	};
 
-	doLogin = () => {
-		let provider = new base.auth.GoogleAuthProvider();
-		base.auth().signInWithRedirect(provider).then(((result) => {
-			// This gives you a Google Access Token. You can use it to access the Google API.
-			// let token = result.credential.accessToken;
-			// console.log(token);
-			// The signed-in user info:
-			let user = result.user;
-			console.log(user);
-		})).catch(((error) => {
-			const errorCode = error.code;
-			const errorMessage = error.message;
-			// The email of the user's account used.
-			const email = error.email;
-			// The firebase.auth.AuthCredential type that was used.
-			const credential = error.credential;
-			console.log(error, errorCode, errorMessage, email, credential);
-		}));
+	doOrgs = () => {
+		this.toggleOrgMenu();
+		browserHistory.push('/orgs');
+	};
+
+	getAllAdditionalData = () => {
+		base.fetch('orgs', {
+		context: this,
+		asArray: true
+		}).then(data => {
+			this.setState({
+				additionalOrgs: data,
+				loading: false
+			});
+		}).catch(error => {
+			console.log('App Additonal error is', error);
+		});
 	}
-	doLogout = () => {
-		base.auth().signOut().then(() => {
-			// Sign-out successful.
-		}, ((error) => {
-			// An error happened.
-			console.log(error);
-		}));
-	}
-/*
-	doAddLocalStorage = (object) => {
-		localStorage.setItem('nomosSupportal', JSON.stringify(object));
-	}
-*/
 
 	// SET UP PROPTYPES
 	static propTypes = {
@@ -263,48 +234,20 @@ export default class App extends Component {
 	};
 }
 /*
-						{this.state.org ?
-							(<span>
-								<h1>
-									<span className={styles.orgIconWrap} style={tempCss}>
-									<Avatar
-										size="medium"
-										type="organisation"
-										title="DB company"
-										defaultIconColor="#eee"
-										/>
-									</span>
-									{this.state.org[0].title}
-								</h1>
-								<Row>
-									<Column occupy={3}>
-										<h4>contact</h4>
-										<p>{this.state.org[0].clientRepId}</p>
-									</Column>
-									<Column occupy={3}>
-										<h4>id</h4>
-										<p>{this.state.org[0].nomosId}</p>
-									</Column>
-									<Column occupy={3}>
-										<h4>color</h4>
-										<p>{this.state.org[0].color}</p>
-									</Column>
-									<Column occupy={3}>
-										<h4>Status</h4>
-										<p>{this.state.org[0].status}</p>
-									</Column>
-								</Row>
-							</span>
-							)
-							: 'loading...'
+						{user && activeOrg ?
+							<Home
+								activeIndex={this.state.activeIndex}
+								activeOrg={orgs[this.state.activeIndex]}
+							/>
+							: null
 						}
-					<HorizontalRule color="#ccc" />
 */
 /*
-	<BackgroundImage lng={this.state.lat} lat={this.state.lng} />
-*/
-/*
-					<div key={this.props.params.dataId} >
-						{childrenWithProps}
-					</div>
-*/
+										<Avatar
+										size="small"
+										type="user"
+										title="example gb"
+									/>
+										{user.username}
+										<span onClick={this.logout}>logout</span>
+	*/

@@ -22,7 +22,7 @@ $sizeSmall: 32px;
 		position: absolute;
 		left: 0;
 		top: 0;
-		padding: 4px;
+		padding: 8px;
 		background: rgba(0,0,0,.02);
 		height: 100%;
 		border-radius: 4px 0 0 4px;
@@ -108,6 +108,7 @@ $sizeSmall: 32px;
 		.iconWrap{
 			width: $sizeSmall;
 			height: $sizeSmall;
+			padding: 4px;
 		}
 		.titleWrap{
 			padding: 0;
