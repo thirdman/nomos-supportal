@@ -12,6 +12,7 @@ import routeHelper from 'helpers/RouteHelper';
 import {
 	App,
 	Admin,
+	AdminEdit,
 	Home,
 	Login,
 	Orgs
@@ -146,7 +147,7 @@ ReactDOM.render(
 			<Route path="/home/:dataId" component={Home} onEnter={updateData} />
 			<Route path="/home/:dataId(/:sectionId)" component={Home} onEnter={updateData} />
 			<Route path="/admin" component={Admin} />
-			<Route path="/admin/:dataId" component={Admin} />
+			<Route path="/admin/:dataId" component={AdminEdit} />
 			<Route onEnter={requireLogin}>
 				<Route path="/upload/" component={Home} />
 			</Route>

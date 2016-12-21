@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import { SketchPicker } from 'react-color';
+import { browserHistory } from 'react-router';
 import {
-	// Link,
-	browserHistory
-	} from 'react-router';
-import {
+	// Avatar,
 	Button,
 	Column,
 	ContentItem,
 	Icon,
 	InputText,
+	MediaItem,
 	// ObjectInfo,
 	// HorizontalRule,
 	Row,
@@ -69,44 +68,73 @@ export default class Admin extends Component {
 					}
 				</div>
 			<Row>
-				{this.state.loading ?
-						<LoadingAnimation />
-					:
-					(
-						!this.state.detailActiveId && this.state.orgs
-						// .sort((a, b) => a.distance - b.distance)
-						.map((item, index) => { //eslint-disable-line
-							return (
-								<div
-									className={styles.adminItem}
-									onClick={() => this.orgSelect(item.id)}
-									key={index}>
-									<Row>
-										<Column occupy={6}>
-											<h3>{item.attributes.knownAs}</h3>
-											<span className={styles.subtitle}>ID: {item.id}</span>
-										</Column>
-										<Column occupy={3}>
-											{this.state.additionalDataOrgs ?
-												this.showAdditionalInfo(item.id)
-												: null
-											}
-										</Column>
-										<Column occupy={3}>
-											<span className={styles.theButtons}>
-												<div className={styles.iconWrap}>
-													<Icon icon="chevron-right" />
-												</div>
-											</span>
-										</Column>
-									</Row>
-								</div>
-							);
-						})
-					)
-				}
+				<Column occupy={9}>
+					{this.state.loading ?
+							<LoadingAnimation />
+						:
+						(
+							!this.state.detailActiveId && this.state.orgs
+							// .sort((a, b) => a.distance - b.distance)
+							.map((item, index) => { //eslint-disable-line
+								return (
+									<div
+										className={styles.adminItem}
+										onClick={() => this.orgSelect(item.id)}
+										key={index}>
+										<Row>
+											<Column occupy={6}>
+												<h3>{item.attributes.knownAs}</h3>
+												<span className={styles.subtitle}>ID: {item.id}</span>
+											</Column>
+											<Column occupy={3}>
+												{this.state.additionalDataOrgs ?
+													this.showAdditionalInfo(item.id)
+													: null
+												}
+											</Column>
+											<Column occupy={3}>
+												<span className={styles.theButtons}>
+													<div className={styles.iconWrap}>
+														<Icon icon="chevron-right" />
+													</div>
+												</span>
+											</Column>
+										</Row>
+									</div>
+								);
+							})
+						)
+					}
+					</Column>
+					<Column occupy={3}>
+						<Section
+							title="admin users"
+							description="Admin users are nomos onboarding type people"
+							>
+								{
+									this.state.additionalUsers ?
+									<span>
+										{
+											this.state.additionalUsers &&
+											this.state.additionalUsers.map((item, index) => {
+												return (
+													<MediaItem
+														content={item.fullName}
+														username={item.fullName}
+														imageUrl={item.img}
+														type="user"
+														key={index}
+														/>
+												);
+											})
+										}
+									</span>
+									:
+									<span>users do not exist</span>
+								}
+						</Section>
+					</Column>
 				</Row>
-
 				{this.state.detailActiveId ?
 					this.showDetailEdit(this.state.detailActiveId)
 					: null
@@ -130,20 +158,17 @@ export default class Admin extends Component {
 		context: this,
 		asArray: true
 		}).then(data => {
-			console.log('retrieved data:', data);
-			console.log('this:', this);
 			this.setState({
 				additionalDataOrgs: data,
 				additionalDataLoading: false,
 				loading: false
 			});
-			console.log('the app data org is', data);
 		}).catch(error => {
 			this.setState({
 				additionalDataLoading: false,
 				loading: false
 			});
-			console.log('App error is', error);
+			console.error('App error is', error);
 			console.log('the app data org is', error);
 		});
 /*
@@ -164,7 +189,10 @@ export default class Admin extends Component {
 	}
 
 	orgSelect = (orgId) => {
-		let thisAdditionalOrg = _.find(this.state.additionalDataOrgs, { dataId: parseFloat(orgId)}); //eslint-disable-line
+		browserHistory.push(`/admin/${orgId}`);
+/*
+		let thisAdditionalOrg = _.find(this.state.additionalDataOrgs,
+		{ dataId: parseFloat(orgId)}); //eslint-disable-line
 		let thisOrgData = _.find(this.state.orgs, { id: parseFloat(orgId)}); //eslint-disable-line
 		// console.log(this.state.orgs);
 		// console.log(thisAdditionalOrg, thisOrgData);
@@ -174,6 +202,7 @@ export default class Admin extends Component {
 			detailActiveOrg: thisOrgData,
 			additionalDetailActiveOrg: thisAdditionalOrg
 		});
+*/
 	}
 	showAdditionalInfo = (orgId) => {
 		const additionalOrgs = this.state.additionalDataOrgs;
@@ -201,9 +230,8 @@ export default class Admin extends Component {
 	showDetailEdit = (orgId) => {
 		let thisAdditionalOrg = this.state.additionalDetailActiveOrg; //eslint-disable-line
 		let thisOrgData = this.state.detailActiveOrg; //eslint-disable-line
-		// let garethStateId = `garethState${orgId}`;
 		let garethState = this.state.garethState;
-		// console.log('showing garethState: ', garethState);
+		console.log('garethstate is ', garethState);
 		if (thisOrgData) {
 			return (
 				<div className={styles.detailEdit}>
@@ -214,8 +242,6 @@ export default class Admin extends Component {
 
 							<Section
 								title="Additional Content Settings"
-								// hasDivider
-								// hasPadding
 								description={'These control the non-nomos type settings'}
 								>
 							<Row>
@@ -305,6 +331,34 @@ export default class Admin extends Component {
 											)}
 										/>
 									</ContentItem>
+									<Section hasBackground title="Admin Users">
+										<Row>
+											<Column>
+												<h4>Available Users</h4>
+												{
+													this.state.additionalUsers ?
+													<span>
+														{
+															this.state.additionalUsers &&
+															this.state.additionalUsers.map((item, index) => {
+																return (
+																	<MediaItem
+																		content={item.fullName}
+																		username={item.fullName}
+																		imageUrl={item.img}
+																		type="user"
+																		key={index}
+																		/>
+																);
+															})
+														}
+													</span>
+													:
+													<span>users do not exist</span>
+												}
+											</Column>
+										</Row>
+									</Section>
 								</Column>
 								<Column occupy={4}>
 									<Section hasBackground>
@@ -375,17 +429,20 @@ export default class Admin extends Component {
 		}
 	}
 	syncAdditionalData = (orgId) => {
+		console.log('syncing garethState');
 		this.setState({
 			additionalDataLoading: true,
 		});
 		if (this.state.detailActiveId) {
+			console.log('this is setting garethstate');
 			base.syncState(`orgs/${orgId}`, {
 				context: this,
 				state: 'garethState',
 				asArray: false
 			});
 		} else {
-			this.setState({garethState: null});
+			// this.setState({garethState: null});
+			console.log('this would set garethstate to null');
 		}
 	}
 

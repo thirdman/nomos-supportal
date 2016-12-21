@@ -1,0 +1,25 @@
+@import '../../global/global.scss';
+
+.Files{
+	animation: slideIn .5s ease-in-out;
+	.filesWrap{
+		background: #eee;
+		padding: 8px;
+		border: 1px solid #ccc;
+		.dbItem{
+			display: block;
+		}
+	}
+}
+
+@keyframes slideIn {
+  from {
+   	opacity: 0;
+    transform: translateY(24px), scaleY(0);
+  }
+  to {
+   	opacity: 1;
+    transform: translateY(0px), scaleY(1);
+  }
+}
+

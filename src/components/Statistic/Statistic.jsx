@@ -46,12 +46,12 @@ export default class Statistic extends Component {
 		if (this.isNumber(parseFloat(content))) {
 			contentNumber = parseFloat(content);
 			digitCount = this.countDecimals(contentNumber);
-		} else if (this.isNumber(content.substring(1).replace(/[, ]+/g, ''))) {
+		} else if (content && this.isNumber(content.substring(1).replace(/[, ]+/g, ''))) {
 			trimContent = content.substring(0, 1);
 			contentNumber = content.substring(1).replace(/[, ]+/g, '');
 			contentNumber = parseFloat(contentNumber.replace(/[, ]+/g, '').trim());
 			digitCount = this.countDecimals(parseFloat(contentNumber));
-		} else if (parseFloat(content.replace(/[, ]+/g, '').trim())) {
+		} else if (content && parseFloat(content.replace(/[, ]+/g, '').trim())) {
 			contentNumber = content.replace(/[, ]+/g, '').trim();
 			contentNumber = contentNumber.replace(/[, ]+/g, '').trim();
 			digitCount = this.countDecimals(contentNumber);

@@ -138,7 +138,7 @@ export default class Chat extends Component {
 				<Column>
 				<p>logged in as: {user.username}</p>
 				<InputTextarea
-					rows={2}
+					rows={3}
 					value={this.newMessageText && this.newMessageText.state.textValue}
 					ref={(c) => { this.newMessageText = c; }}
 					onChangeProps={(value) => this.updateCurrentText(value)}

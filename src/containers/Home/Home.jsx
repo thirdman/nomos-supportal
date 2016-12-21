@@ -10,6 +10,7 @@ import {
 	Avatar,
 	// Button,
 	Column,
+	Files,
 	HorizontalRule,
 	// Icon,
 	LoadingAnimation,
@@ -38,9 +39,6 @@ const base = Rebase.createClass({
 
 export default class Home extends Component {
 	state = {
-		// org: this.props.org,
-		// activeOrg: this.props.activeOrg,
-		// orgData: (this.props.activeOrg ? dataDetail[this.props.activeOrg.id] : null),
 		activeOrgDataId: this.props.params.dataId,
 		loading: true,
 		transition: false,
@@ -66,6 +64,7 @@ export default class Home extends Component {
 			console.log('sectionId does not exist:');
 		}
 		this.setupPage(this.props.params.dataId);
+		// this.getUsers(this.props.params.dataId);
 		// console.log(dataDetail);
 	}
 	componentDidMount() {
@@ -88,10 +87,6 @@ export default class Home extends Component {
 		let activeAgreements = _.filter(agreements, function (o) { //eslint-disable-line
 			return o.attributes.agreementMode === 'Active';
 			});
-		let leaseAgreements = _.filter(agreements, function (o) { //eslint-disable-line
-			return o.attributes.agreementType === 'Lease';
-			});
-		console.log(leaseAgreements);
 		let tempCss = {
 			backgroundColor: (
 			this.state.additionalData &&
@@ -173,6 +168,14 @@ export default class Home extends Component {
 							);
 						})
 						}
+						{this.state.thisOrgUsers && this.state.thisOrgUsers.map((item, index) => {
+								return (
+									<div className={styles.userItem} key={index} style={{width: '100%'}}>
+										{item.id}
+									</div>
+								);
+							})
+						}
 						{this.state.additionalData ?
 							(<div>
 								<h4>Support Team</h4>
@@ -222,6 +225,25 @@ export default class Home extends Component {
 						<span><LoadingAnimation /> loading additional content...</span>
 						: null
 					}
+					{/* FAKE SUFF HERE */}
+					{this.state.additionalData && this.state.additionalData.projectedAgreementCount ? //eslint-disable-line
+						<Statistic
+						content={this.state.additionalData &&
+							this.state.additionalData.projectedAgreementCount}
+						title="Projected Agreements"
+						isAnimated
+						hasDivider />
+						: null
+					}
+					{agreements ?
+						<Statistic
+							content={agreements.length - activeAgreements.length}
+							title="Inactive"
+							isAnimated
+							hasDivider />
+						: null
+					}
+
 				</Column>
 				<Column occupy={9}>
 					{!this.props.params.sectionId || this.props.params.sectionId === 'overview' ?
@@ -236,7 +258,7 @@ export default class Home extends Component {
 							}
 							</Section>
 							<Section title="Agreements" hasDivider>
-								{agreements ?
+								{agreements && 'ggg' === 'sss' ?
 									<Row>
 										<Column occupy={3}>
 											{agreements ?
@@ -257,26 +279,21 @@ export default class Home extends Component {
 										<Column occupy={3}>
 											{agreements ?
 												<Statistic
-													content={agreements && (agreements.length - activeAgreements.length)}
+													content={12}
 													title="Inactive"
 													isAnimated
 													hasDivider />
 												: null }
 										</Column>
 										<Column occupy={3}>
-											{this.state.additionalData ?
+											{this.state.additionalData && this.state.additionalData.projectedAgreementCount ? //eslint-disable-line
 												<Statistic
 												content={this.state.additionalData &&
 													this.state.additionalData.projectedAgreementCount}
 												title="Projected Agreements"
 												isAnimated
 												hasDivider />
-												:
-												<Statistic
-												content={users && users.length}
-												title="Users"
-												isAnimated
-												hasDivider />
+												: null
 											}
 										</Column>
 									</Row>
@@ -284,7 +301,7 @@ export default class Home extends Component {
 								}
 							</Section>
 							<Section title="Account" hasDivider>
-								{activeOrg ?
+								{activeOrg && 'ggg' === 's' ?
 									<Row>
 										<Column occupy={3}>
 											{agreements ?
@@ -374,7 +391,10 @@ export default class Home extends Component {
 					}
 					{this.props.params.sectionId && this.props.params.sectionId === 'files' ?
 						<Section title="Files">
-							<span>Files will be here</span>
+							<Files
+								orgId={activeOrgDataId}
+								title="dropbox"
+								/>
 						</Section>
 						: null
 					}
@@ -418,6 +438,7 @@ export default class Home extends Component {
 			orgData: thisOrg
 		});
 		this.getOrgData(dataId);
+		this.updateAccounts(thisOrg);
   }
 	getOrgData = (orgId) => {
 		this.setState({loading: true});
@@ -440,6 +461,53 @@ export default class Home extends Component {
 		}).catch((err) => {
 			this.updateError(err.errors[0]);
 		});
+/*
+		client.get(`/organisations/${orgId}/accounts`).then((res) => {
+			console.log('accounts res is: ', res);
+		}).catch((err) => {
+			console.error(err);
+			// this.updateError(err.errors[0]);
+		});
+*/
+	}
+  updateAccounts = (orgData) => {
+		console.log('getting accounts: ', orgData);
+		console.log('getting accounts: ', orgData.relationships.accounts.data);
+		let accountArray = orgData.relationships.accounts.data;
+		// https://api.nomosone.com/v1/organisations/1/accounts/12
+		let availableUserIds = accountArray.map((item) => {
+			return {id: item.id};
+		});
+		this.setState({
+			thisOrgUsers: availableUserIds
+		});
+/*
+		let availableAccounts;
+		client.get('/accounts').then((res) => {
+			console.log('accounts res is: ', res.data);
+			availableAccounts = res.data;
+			console.log('availableAccounts is: ', availableAccounts);
+			let theset = [{id: 1}, {id: 2}, {id: 1639}];
+			let garethArray = availableAccounts.map(({id, type}) => {
+				console.log(id, type);
+				// return availableUserIds.map(
+					// availableUserIds => availableUserIds.id).indexOf(id) > -1; // eslint-disable-line
+				return theset.map((theset.id)).indexOf(id) > -1;
+			});
+			console.log('garethArray: ', garethArray);
+			let filteredArray = availableAccounts.filter(
+				(item, id = item.id) => (availableUserIds.indexOf(id) < 0)
+				); //eslint-disable-line
+			console.log('filtered array: ', filteredArray);
+			let filteredArray1 = _.filter(availableAccounts, function (o) { //eslint-disable-line
+				return _.includes(availableAccounts, o.id);
+				});
+				console.log('filtered array1: ', filteredArray);
+		}).catch((err) => {
+			this.updateError(err.errors[0]);
+			console.error(err);
+		});
+*/
 	}
 
 	getAdditionalData = (orgId) => {
@@ -451,8 +519,8 @@ export default class Home extends Component {
 		context: this,
 		asArray: false
 		}).then(data => {
-			console.log('retrieved data:', data);
-			console.log('this:', this);
+			// console.log('retrieved data:', data);
+			// console.log('this:', this);
 			this.setState({
 				additionalData: data,
 				additionalDataLoading: false,
@@ -468,6 +536,50 @@ export default class Home extends Component {
 			console.log('the app data org is', error);
 		});
 	}
+
+	/* OLD THINGS */
+	doLoadingItems = () => {
+		let rows = [];
+		for (let i = 0; i < 3; i++) {
+			rows.push(
+				<div className={styles.beach} key={i}>
+					<LoadingAnimation isVisbile />
+					<h3>&nbsp;</h3>
+					<p>&nbsp;</p>
+				</div>
+			);
+		}
+		return <section>{ rows }</section>;
+	}
+	doTranstion = (page) => {
+		console.log(page);
+		this.toggleTransition();
+		setTimeout(() => {
+			// this.toggleLoading();
+			this.toggleTransition();
+			}, 800);
+		setTimeout(() => {
+			browserHistory.push(page);
+			}, 800);
+	}
+	toggleLoading = () => {
+		this.setState({
+			loading: !this.state.loading
+		});
+	};
+	toggleTransition = () => {
+		this.setState({
+			transition: !this.state.transition
+		});
+	};
+}
+
+/*
+		let leaseAgreements = _.filter(agreements, function (o) { //eslint-disable-line
+			return o.attributes.agreementType === 'Lease';
+			});
+		console.log('leaseAgreements: ', leaseAgreements);
+*/
 /*
 	setOrg = (orgId) => {
 		if (orgId) {
@@ -515,40 +627,6 @@ export default class Home extends Component {
 			if (err) throw err;
 			console.log(res);
 		});
+
+agreements && (agreements.length - activeAgreements.length)
 */
-	/* OLD THINGS */
-	doLoadingItems = () => {
-		let rows = [];
-		for (let i = 0; i < 3; i++) {
-			rows.push(
-				<div className={styles.beach} key={i}>
-					<LoadingAnimation isVisbile />
-					<h3>&nbsp;</h3>
-					<p>&nbsp;</p>
-				</div>
-			);
-		}
-		return <section>{ rows }</section>;
-	}
-	doTranstion = (page) => {
-		console.log(page);
-		this.toggleTransition();
-		setTimeout(() => {
-			// this.toggleLoading();
-			this.toggleTransition();
-			}, 800);
-		setTimeout(() => {
-			browserHistory.push(page);
-			}, 800);
-	}
-	toggleLoading = () => {
-		this.setState({
-			loading: !this.state.loading
-		});
-	};
-	toggleTransition = () => {
-		this.setState({
-			transition: !this.state.transition
-		});
-	};
-}

@@ -22,7 +22,7 @@ export default class SubNavWrap extends Component {
 		const {
 			listData = [],
 			selected,
-			currentlySelected,
+			// currentlySelected,
 			classNameProps
 		} = this.props;
 		let classes;
@@ -31,7 +31,7 @@ export default class SubNavWrap extends Component {
 			.filter((cName) => { return !!cName; })
 			.map((classV) => styles[classV]).join(' ');
 
-		console.log('currently selected: ', currentlySelected);
+		// console.log('currently selected: ', currentlySelected);
 		return (
 			<ul
 				className={

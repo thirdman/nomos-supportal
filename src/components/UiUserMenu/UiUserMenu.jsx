@@ -56,6 +56,11 @@ export default class UiUserMenu extends Component {
 									content={'Profile'}
 									classNameProps={['btn', 'text', 'actionItem']} />
 								<Button
+									key={'optionAdmin'}
+									content={'Admin'}
+									onClickProps={this.doAdmin}
+									classNameProps={['btn', 'text', 'actionItem']} />
+								<Button
 									key={'optionLogout'}
 									content={'Log out'}
 									onClickProps={this.logout}
@@ -69,6 +74,9 @@ export default class UiUserMenu extends Component {
 	toggleOpen = () => {
 		// console.log(this.state);
 		this.setState({ isOpen: !this.state.isOpen});
+	}
+	doAdmin = () => {
+		browserHistory.push('/admin');
 	}
 	logout = () => {
 		const tempObject = {user: null};
