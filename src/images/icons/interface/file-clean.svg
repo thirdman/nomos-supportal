@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
+    <title>file</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="interface-icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="file" fill="#272721">
+            <path d="M22,6 L31,15 L23.9973917,15 C22.8942627,15 22,14.1041422 22,13.0026083 L22,6 Z" id="Path-8"></path>
+            <path d="M13,32 L29,32 L29,15.0008642 C29,14.9562214 28.788238,14.4450922 28.7554223,14.4122766 L22.5877234,8.24457768 C22.5551176,8.21197183 22.0448317,8 22.0081158,8 L13,8 L13,32 Z M10.9918842,4 L22.0081158,4 C23.1066027,4 24.6340322,4.6340322 25.4161506,5.41615055 L31.5838494,11.5838494 C32.3671375,12.3671375 33,13.8958174 33,15.0008642 L33,33.9991358 C33,35.0983727 32.1023548,36 30.9950534,36 L11.0049466,36 C9.89702623,36 9,35.103789 9,33.9982567 L9,6.00174332 C9,4.88926172 9.89179693,4 10.9918842,4 Z" id="Path-7"></path>
+        </g>
+    </g>
+</svg>

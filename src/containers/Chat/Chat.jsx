@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import { browserHistory } from 'react-router';
+// import test from 'slack/methods/api.test';
+import slack from 'slack';
 import {
 	// Avatar,
 	Button,
@@ -175,7 +177,8 @@ export default class Chat extends Component {
 				}
 		}).then(newLocation => {
 			let generatedKey = newLocation.key;
-			console.log(generatedKey);
+			console.log('generatedKey: ', generatedKey);
+			this.slackIt(textValue, user);
 			this.newMessageText.value = null;
 		}).catch(err => {
 			console.log(err);
@@ -185,19 +188,33 @@ export default class Chat extends Component {
 		let generatedKey = immediatelyAvailableReference.key;
 		console.log('initial generated key: ', generatedKey);
 	}
-/*
-addBear(){
-  var immediatelyAvailableReference = base.push('bears', {
-    data: {name: 'George', type: 'Grizzly'}
-  }).then(newLocation => {
-    var generatedKey = newLocation.key;
-  }).catch(err => {
-    // handle error
-  });
-  // available immediately, you don't have to wait for the Promise to resolve
-  var generatedKey = immediatelyAvailableReference.key;
-}
-*/
+
+	slackIt = (theText, user) => {
+		// console.info('theText: ', theText);
+		// console.info('user: ', user);
+		let theToken = 'xoxp-2179780513-2179780515-119964565108-db83ff94a5af117dab3fc4ca80652c51';
+		// let theChannel = '#devtest';
+		// let theChannel = '@rachel';
+		let theChannel = '#supportal';
+		let theMessage = theText;
+		let theUsername = `Supportal User: ${user.username}`;
+		let theImage = 'http://animal-dream.com/data_images/turtle/turtle4.jpg';
+		let theUrl = 'https://slack.com/api/chat.postMessage';
+		let theEmoji = ':party:';
+		// https://slack.com/api/chat.postMessage?token=xoxp-2179780513-2179780515-119964565108-db83ff94a5af117dab3fc4ca80652c51&channel=%23devtest&text=gareth%20is%20good&pretty=1
+		console.log(theToken, theChannel, theMessage, theUsername, theUrl);
+		// test({ hyper: 'card' }, console.log);
+		slack.chat.postMessage({
+			token: theToken,
+			channel: theChannel,
+			text: theMessage,
+			username: theUsername,
+			icon_url: theImage,
+			icon_emoji: theEmoji
+		}, (err, data) => (
+			console.log(err, data)
+		));
+	}
 /*
 addItem(newItem){
   this.setState({
@@ -216,29 +233,22 @@ addItem(newItem){
 		context: this,
 		asArray: true
 		}).then(data => {
-			console.log('retrieved data:', data);
-			console.log('this:', this);
+			// console.log('retrieved data:', data);
+			// console.log('this:', this);
 			this.setState({
 				additionalDataOrgs: data,
 				additionalDataLoading: false,
 				loading: false
 			});
-			console.log('the app data org is', data);
+			// console.log('the app data org is', data);
 		}).catch(error => {
 			this.setState({
 				additionalDataLoading: false,
 				loading: false
 			});
 			console.log('App error is', error);
-			console.log('the app data org is', error);
+			// console.log('the app data org is', error);
 		});
-/*
-		base.bindToState('orgs', {
-			context: this,
-			state: 'additionalDataOrgs',
-			asArray: true
-		});
-*/
 	}
 
 	getAdditionalUsers = () => {
@@ -310,58 +320,3 @@ addItem(newItem){
 		isLoading: React.PropTypes.bool
 	};
 }
-/*													<Row>
-														<Column occupy={12}>
-															<div className={styles.message}>
-																<div className={styles.triangle} />
-																{item.message}
-															</div>
-															<div className={styles.messageMeta}>
-																<div className={styles.user}>
-																	<Avatar
-																		type="user"
-																		size={'small'}
-																		title={item.user}
-																	/>
-																	<span className={styles.username}>{item.user}</span>
-																</div>
-																<div className={styles.date}>
-																<h4 className={styles.subtitle}>
-																	{moment(item.timestamp).fromNow()}
-																</h4>
-																</div>
-															</div>
-														</Column>
-													</Row>
-
-																		{moment(item.timestamp).format('HH:mm, DD MMM YYYY')}
-						// .sort((a, b) => a.distance - b.distance)
-						.map((item, index) => { //eslint-disable-line
-							return (
-								<div
-									className={styles.adminItem}
-									onClick={() => this.orgSelect(item.id)}
-									key={index}>
-									<Row>
-										<Column occupy={6}>
-											<h3>{item.attributes.knownAs}</h3>
-											<span className={styles.subtitle}>ID: {item.id}</span>
-										</Column>
-										<Column occupy={3}>
-											{this.state.additionalDataOrgs ?
-												this.showAdditionalInfo(item.id)
-												: null
-											}
-										</Column>
-										<Column occupy={3}>
-											<span className={styles.theButtons}>
-												<div className={styles.iconWrap}>
-													<Icon icon="chevron-right" />
-												</div>
-											</span>
-										</Column>
-									</Row>
-								</div>
-							);
-						})
-*/

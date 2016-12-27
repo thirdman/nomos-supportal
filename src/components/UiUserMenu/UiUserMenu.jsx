@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { Button, Icon, Avatar } from 'components';
+import {
+	Avatar,
+	Button,
+	Icon,
+	Section,
+	ContentItem,
+	InputText
+	} from 'components';
 import cx from 'classnames';
 import { browserHistory } from 'react-router';
 // import { autobind } from 'core-decorators';
@@ -12,15 +19,15 @@ export default class UiUserMenu extends Component {
 
 	state = {
 		isOpen: false,
+		profileActive: false,
 		user: this.props.user
 	};
 	componentWillMount() {
 		// console.log('usermenu mounting...');
 	}
-
 	render() {
 		// const { auth } = this.context.store;
-		const { isOpen, user } = this.state;
+		const { isOpen, user, profileActive } = this.state;
 		// console.log(user, isOpen);
 		// console.log(Button, isOpen);
 		return (
@@ -44,6 +51,28 @@ export default class UiUserMenu extends Component {
 						: <Icon icon="chevron-down" color="blue" size={12} />
 					}
 				</span>
+				{profileActive ?
+					<div className={styles.profile}>
+						<div className={styles.backdrop} >
+							<div className={styles.profileWrap}>
+								<Section
+									title="Your Profile"
+									description="This is your profile"
+									>
+									<h4>Username</h4>
+									<div>{user.username}</div>
+									<ContentItem title="Display Name">
+										<InputText
+											value={user.name}
+										/>
+									</ContentItem>
+								<Button content="done" onClickProps={this.toggleProfile} />
+								</Section>
+							</div>
+						</div>
+					</div>
+					: null
+				}
 				{isOpen &&
 					<div className={styles.actionItems}>
 						<div className={styles.triangle} />
@@ -54,6 +83,7 @@ export default class UiUserMenu extends Component {
 								<Button
 									key={'optionProfile'}
 									content={'Profile'}
+									onClickProps={this.toggleProfile}
 									classNameProps={['btn', 'text', 'actionItem']} />
 								<Button
 									key={'optionAdmin'}
@@ -70,7 +100,6 @@ export default class UiUserMenu extends Component {
 			</div>
 		);
 	}
-
 	toggleOpen = () => {
 		// console.log(this.state);
 		this.setState({ isOpen: !this.state.isOpen});
@@ -83,25 +112,11 @@ export default class UiUserMenu extends Component {
 		localStorage.setItem('nomosSupportal', JSON.stringify(tempObject));
 		browserHistory.push('/login');
 	}
+	toggleProfile = () => {
+		// const { profileActive } = this.state;
+		console.info('toggling profile');
+		this.setState({
+			profileActive: !this.state.profileActive
+		});
+	}
 }
-// {user.username}
-/*
-						{isOpen ?
-							<div className={styles.actionItems}>
-								<div className={styles.triangle} />
-								<div className={styles.userActionHeader}>
-									<h4 className={styles.subtitle}>USER</h4>
-									<span className={styles.userNameText} >aaa</span>
-								</div>
-								<Button
-									key={'option-profile'}
-									content={'Profile'}
-									classNameProps={['btn', 'text', 'actionItem']} />
-								<Button
-									key={'option-logout'}
-									content={'Log out'}
-									classNameProps={['btn', 'text', 'actionItem']} />
-							</div>
-							: null
-						}
-*/

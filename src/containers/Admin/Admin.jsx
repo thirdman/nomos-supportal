@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
-import { SketchPicker } from 'react-color';
 import { browserHistory } from 'react-router';
+import cx from 'classnames';
 import {
 	// Avatar,
-	Button,
+	// Button,
 	Column,
-	ContentItem,
+	// ContentItem,
 	Icon,
-	InputText,
-	MediaItem,
+	// MediaItem,
+	MediaItemList,
 	// ObjectInfo,
 	// HorizontalRule,
 	Row,
@@ -33,7 +33,8 @@ export default class Admin extends Component {
 		loading: true,
 		transition: false,
 		detailActiveId: false,
-		showColorPicker: false
+		showColorPicker: false,
+		itemsLoading: true
 	}
 	componentWillMount() {
 		console.log('WillMount Admin');
@@ -78,7 +79,11 @@ export default class Admin extends Component {
 							.map((item, index) => { //eslint-disable-line
 								return (
 									<div
-										className={styles.adminItem}
+										className={
+											cx(styles.adminItem,
+												(!this.state.itemsLoading ? styles.isVisible : '')
+												)
+											}
 										onClick={() => this.orgSelect(item.id)}
 										key={index}>
 										<Row>
@@ -96,6 +101,7 @@ export default class Admin extends Component {
 												<span className={styles.theButtons}>
 													<div className={styles.iconWrap}>
 														<Icon icon="chevron-right" />
+														{/* icon="view" size={40} */}
 													</div>
 												</span>
 											</Column>
@@ -108,30 +114,22 @@ export default class Admin extends Component {
 					</Column>
 					<Column occupy={3}>
 						<Section
-							title="admin users"
+							title="Admin Users"
 							description="Admin users are nomos onboarding type people"
 							>
 								{
 									this.state.additionalUsers ?
 									<span>
-										{
-											this.state.additionalUsers &&
-											this.state.additionalUsers.map((item, index) => {
-												return (
-													<MediaItem
-														content={item.fullName}
-														username={item.fullName}
-														imageUrl={item.img}
-														type="user"
-														key={index}
-														/>
-												);
-											})
-										}
+										<MediaItemList
+											data={this.state.additionalUsers}
+											// title="test list"
+											type="user"
+										/>
 									</span>
 									:
-									<span>users do not exist</span>
+									<span>Loading Users...</span>
 								}
+
 						</Section>
 					</Column>
 				</Row>
@@ -148,7 +146,7 @@ export default class Admin extends Component {
 		const theOrgs = supportalStorage.orgs;
 		this.setState({
 			orgs: theOrgs
-		});
+		}, () => this.toggleItemsLoading()); // toggle visibliy after state is done
   }
 	getAdditionalData = () => {
 		this.setState({
@@ -190,20 +188,8 @@ export default class Admin extends Component {
 
 	orgSelect = (orgId) => {
 		browserHistory.push(`/admin/${orgId}`);
-/*
-		let thisAdditionalOrg = _.find(this.state.additionalDataOrgs,
-		{ dataId: parseFloat(orgId)}); //eslint-disable-line
-		let thisOrgData = _.find(this.state.orgs, { id: parseFloat(orgId)}); //eslint-disable-line
-		// console.log(this.state.orgs);
-		// console.log(thisAdditionalOrg, thisOrgData);
-		this.syncAdditionalData(orgId);
-		this.setState({
-			detailActiveId: orgId,
-			detailActiveOrg: thisOrgData,
-			additionalDetailActiveOrg: thisAdditionalOrg
-		});
-*/
 	}
+
 	showAdditionalInfo = (orgId) => {
 		const additionalOrgs = this.state.additionalDataOrgs;
 		let thisAdd = _.find(additionalOrgs, { dataId: parseFloat(orgId)}); //eslint-disable-line
@@ -227,7 +213,132 @@ export default class Admin extends Component {
 		}
 	}
 
-	showDetailEdit = (orgId) => {
+	syncAdditionalData = (orgId) => {
+		console.log('syncing garethState');
+		this.setState({
+			additionalDataLoading: true,
+		});
+		if (this.state.detailActiveId) {
+			console.log('this is setting garethstate');
+			base.syncState(`orgs/${orgId}`, {
+				context: this,
+				state: 'garethState',
+				asArray: false
+			});
+		} else {
+			// this.setState({garethState: null});
+			console.log('this would set garethstate to null');
+		}
+	}
+
+	saveDetail = (orgId) => {
+		// let thisOrgData = _.find(this.state.orgs, { id: parseFloat(orgId)}); //eslint-disable-line
+		if (this.state.detailActiveId) {
+			console.log('aditionalDetailActive: ', this.state.additionalDetailActiveOrg);
+			console.log('saving with the id of ', orgId);
+			console.log(this.state.garethState);
+			console.log(`garethState${orgId}`);
+			let tempObj = this.state.garethState;
+			tempObj.dataId = orgId;
+			console.log(tempObj);
+			base.post(`orgs/${orgId}`, {
+				data: tempObj
+				}).then(() => {
+					this.setState({
+						detailActiveId: null,
+						detailActiveOrg: null,
+						additionalDetailActiveOrg: null,
+						garethState: null
+					});
+				// Router.transitionTo('dashboard');
+			}).catch(err => {
+				console.log(err);
+				// handle error
+			});
+		}
+	}
+
+	closeDetail = () => {
+		this.setState({
+			detailActiveId: null,
+			detailActiveOrg: null,
+			additionalDetailActiveOrg: null
+		});
+	}
+	handleChangeComplete = (color) => {
+		// let thisOrgData = _.find(this.state.orgs, { id: parseFloat(orgId)}); //eslint-disable-line
+		console.log('color object is: ', color);
+		this.setState({
+			garethState: {
+				...this.state.garethState, color: color.hex }
+			});
+		this.toggleColorPicker();
+	}
+	toggleColorPicker = () => {
+		this.setState({
+			showColorPicker: !this.state.showColorPicker
+		});
+	}
+	// EDIT FUNTIONS
+	updateName = () => {
+		console.log('this.updateName: ', this.repName.props.value);
+		this.setState({
+		additionalDetailActiveOrg: {
+			...this.state.additionalDetailActiveOrg, rep: this.repName.props.value }
+		});
+	}
+	// UTILIITY FUNTIONS
+	doTransition = (page) => {
+		console.log(page);
+		this.toggleTransition();
+		setTimeout(() => {
+			// this.toggleLoading();
+			this.toggleTransition();
+			}, 800);
+		setTimeout(() => {
+			browserHistory.push(page);
+			}, 800);
+	}
+	toggleLoading = () => {
+		this.setState({
+			loading: !this.state.loading
+		});
+	};
+	toggleTransition = () => {
+		this.setState({
+			transition: !this.state.transition
+		});
+	};
+	// THE INDIVIDUAL ITEMS
+	toggleItemsLoading = () => {
+		console.log('toggling Items Loading 2');
+		// DELAYS TRANSITION BY 300ms
+		setTimeout(() => {
+			this.setState({
+				// itemsLoading: !this.state.itemsLoading
+				itemsLoading: false
+			});
+		}, 300);
+	};
+}
+/*
+				<HorizontalRule />
+				{this.state.additionalDataOrgs ?
+					<Row>
+						<h4>Additional data:</h4>
+						{this.state.additionalDataOrgs.map((item, index) => {
+							return (
+							<div key={index} className={styles.additionalItem}>
+								{item.name}
+							</div>
+							);
+						})}
+					</Row>
+					: null
+				}
+*/
+/*
+		showDetailEdit = (orgId) => {
 		let thisAdditionalOrg = this.state.additionalDetailActiveOrg; //eslint-disable-line
 		let thisOrgData = this.state.detailActiveOrg; //eslint-disable-line
 		let garethState = this.state.garethState;
@@ -250,7 +361,8 @@ export default class Admin extends Component {
 										<InputText
 											placeholder="RepId"
 											placeholderBelow
-											value={garethState && garethState.repId && garethState.repId.toString()} // eslint-disable-line
+											value={garethState && garethState.repId &&
+											garethState.repId.toString()} // eslint-disable-line
 											onChangeProps={(value) => this.setState({
 													garethState: {
 														...garethState, repId: value }
@@ -323,7 +435,8 @@ export default class Admin extends Component {
 											label="the number of agreements expected"
 											placeholder="Number of Agreements"
 											placeholderBelow
-											value={garethState && garethState.projectedAgreementCount && garethState.projectedAgreementCount.toString()} // eslint-disable-line
+											value={garethState && garethState.projectedAgreementCount &&
+											garethState.projectedAgreementCount.toString()} // eslint-disable-line
 											onChangeProps={(value) => this.setState({
 													garethState: {
 														...garethState, projectedAgreementCount: parseFloat(value) }
@@ -428,116 +541,4 @@ export default class Admin extends Component {
 			);
 		}
 	}
-	syncAdditionalData = (orgId) => {
-		console.log('syncing garethState');
-		this.setState({
-			additionalDataLoading: true,
-		});
-		if (this.state.detailActiveId) {
-			console.log('this is setting garethstate');
-			base.syncState(`orgs/${orgId}`, {
-				context: this,
-				state: 'garethState',
-				asArray: false
-			});
-		} else {
-			// this.setState({garethState: null});
-			console.log('this would set garethstate to null');
-		}
-	}
-
-	saveDetail = (orgId) => {
-		// let thisOrgData = _.find(this.state.orgs, { id: parseFloat(orgId)}); //eslint-disable-line
-		if (this.state.detailActiveId) {
-			console.log('aditionalDetailActive: ', this.state.additionalDetailActiveOrg);
-			console.log('saving with the id of ', orgId);
-			console.log(this.state.garethState);
-			console.log(`garethState${orgId}`);
-			let tempObj = this.state.garethState;
-			tempObj.dataId = orgId;
-			console.log(tempObj);
-			base.post(`orgs/${orgId}`, {
-				data: tempObj
-				}).then(() => {
-					this.setState({
-						detailActiveId: null,
-						detailActiveOrg: null,
-						additionalDetailActiveOrg: null,
-						garethState: null
-					});
-				// Router.transitionTo('dashboard');
-			}).catch(err => {
-				console.log(err);
-				// handle error
-			});
-		}
-	}
-
-	closeDetail = () => {
-		this.setState({
-			detailActiveId: null,
-			detailActiveOrg: null,
-			additionalDetailActiveOrg: null
-		});
-	}
-	handleChangeComplete = (color) => {
-		// let thisOrgData = _.find(this.state.orgs, { id: parseFloat(orgId)}); //eslint-disable-line
-		console.log('color object is: ', color);
-		this.setState({
-			garethState: {
-				...this.state.garethState, color: color.hex }
-			});
-		this.toggleColorPicker();
-	}
-	toggleColorPicker = () => {
-		this.setState({
-			showColorPicker: !this.state.showColorPicker
-		});
-	}
-	// EDIT FUNTIONS
-	updateName = () => {
-		console.log('this.updateName: ', this.repName.props.value);
-		this.setState({
-		additionalDetailActiveOrg: {
-			...this.state.additionalDetailActiveOrg, rep: this.repName.props.value }
-		});
-	}
-	// UTILIITY FUNTIONS
-	doTransition = (page) => {
-		console.log(page);
-		this.toggleTransition();
-		setTimeout(() => {
-			// this.toggleLoading();
-			this.toggleTransition();
-			}, 800);
-		setTimeout(() => {
-			browserHistory.push(page);
-			}, 800);
-	}
-	toggleLoading = () => {
-		this.setState({
-			loading: !this.state.loading
-		});
-	};
-	toggleTransition = () => {
-		this.setState({
-			transition: !this.state.transition
-		});
-	};
-}
-/*
-				<HorizontalRule />
-				{this.state.additionalDataOrgs ?
-					<Row>
-						<h4>Additional data:</h4>
-						{this.state.additionalDataOrgs.map((item, index) => {
-							return (
-							<div key={index} className={styles.additionalItem}>
-								{item.name}
-							</div>
-							);
-						})}
-					</Row>
-					: null
-				}
 */

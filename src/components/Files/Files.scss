@@ -3,12 +3,68 @@
 .Files{
 	animation: slideIn .5s ease-in-out;
 	.filesWrap{
-		background: #eee;
+		// background: #eee;
+		// background: rgba(255,255,255,.2);
 		padding: 8px;
-		border: 1px solid #ccc;
-		.dbItem{
-			display: block;
+		border-top: 1px solid #ccc;
+		border-top: 1px solid #ccc;
+	}
+	ul{
+		padding: 0;
+		margin: 0;
+	}
+	.fileItem{
+		display: block;
+		min-height: 32px;
+		padding-top: 4px;
+		border-bottom: 1px dashed #ddd;
+		&.folder{
+			.fileName{
+				font-weight: bold;
+			}	
 		}
+		&.file{
+			
+		}
+	}
+	.nameWrap{
+		display: block;
+		width: 100%;
+		.fileIconWrap{
+			height: 20px;
+			width: 20px;
+			margin-right: 4px;
+			display: inline-block;
+			vertical-align: top;
+		}
+		.fileName{
+			display: inline-block;
+			font-weight: normal;
+		}
+	}
+	.fileSize{
+		color: $nomosGrey;
+	}
+	.filePreview{
+		height: 80px;
+		margin: 4px;
+	}
+	.dropzone{
+		border: 1px dashed $nomosGrey;
+    border-radius: 5px;
+    padding: 32px 20px;
+    background: rgba(255,255,255,.2);
+    text-align: center;
+    font-style: italic;
+    &.uploading{
+	    border: 1px solid $nomosBlue;
+	    background: transparent;
+    }
+    .uploadIconWrap{
+	    display: block;
+	    width: 40px;
+	    margin: 0 auto;
+    }
 	}
 }
 

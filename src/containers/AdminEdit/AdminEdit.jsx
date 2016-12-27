@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
 import { SketchPicker } from 'react-color';
+import cx from 'classnames';
 import {
 	browserHistory
 	} from 'react-router';
@@ -9,9 +10,10 @@ import {
 	Button,
 	Column,
 	ContentItem,
-	// Icon,
+	Icon,
 	InputText,
 	MediaItem,
+	MediaItemList,
 	// ObjectInfo,
 	// HorizontalRule,
 	Row,
@@ -51,10 +53,17 @@ export default class AdminEdit extends Component {
 		// this.getAdditionalData();
 		this.syncData();
 		this.getAdditionalUsers();
+		this.getActiveUsers();
+		// this.doUpdateActiveUsers();
 	}
+	componentDidUpdate() {
+		this.doUpdateRefresh();
+	}
+
 	render() {
 		// const { onExitProps} = this.props;
-		const { orgId, orgData, additionalData } = this.state;
+		const { orgData, additionalData, activeUsers, inactiveUsers } = this.state;
+		const orgId = this.props.params.dataId;
 		// let thisAdditionalOrg = this.state.additionalDetailActiveOrg; //eslint-disable-line
 		// let thisOrgData = this.state.detailActiveOrg; //eslint-disable-line
 		console.log('additionalData is ', additionalData);
@@ -160,22 +169,22 @@ export default class AdminEdit extends Component {
 													)}
 												/>
 											</ContentItem>
+											<ContentItem title="Entered Agreement Count">
+												<InputText
+													label="The number of agreements entered but not reviewed yet"
+													placeholder="Number of Entered"
+													placeholderBelow
+													value={additionalData && additionalData.enteredAgreementCount && additionalData.enteredAgreementCount.toString()} // eslint-disable-line
+													onChangeProps={(value) => this.setState({
+															additionalData: {
+																...additionalData, enteredAgreementCount: parseFloat(value) }
+															}
+													)}
+												/>
+											</ContentItem>
 											<Section hasBackground title="Admin Users">
 												<Row>
 													<Column>
-														<h4>Assigned Users</h4>
-														{ additionalData && additionalData.users ?
-																<span>
-																	{
-																		additionalData && additionalData.users.map((includedUser) => {
-																			console.log(includedUser.dataId);
-																			return (includedUser.dataId);
-																		})
-																	}
-																</span>
-															: <span>loading users</span>
-														}
-
 														<h4>Available Users</h4>
 														{
 															additionalData && this.state.additionalUsers ?
@@ -183,23 +192,40 @@ export default class AdminEdit extends Component {
 																{
 																	this.state.additionalUsers &&
 																	this.state.additionalUsers.map((item, index) => {
-																		let userHasOrgs = item.orgs;
+																		// let { activeUsers, inactiveUsers } = this.state;
+																		let userHasOrgs = activeUsers;
 																		let isInOrg = false;
+																		console.log('activeUsers, inactiveUsers: ',
+																			activeUsers, inactiveUsers, item);
 																		if (userHasOrgs) {
-																			isInOrg = _.find(item.orgs, { 'dataId': parseFloat(orgId)}); //eslint-disable-line	
+																			isInOrg = _.find(activeUsers, { 'dataId': parseFloat(item.dataId)}); //eslint-disable-line
+																			console.log('isinorg, and fins users, ', isInOrg,
+																			_.find(activeUsers, { 'dataId': parseFloat(item.dataId)}));//eslint-disable-line
 																		}
-																		console.log('userhasorgs: ', userHasOrgs);
-																		console.log('isInorg: ', isInOrg);
+																		console.log('difference is: ',
+																			_.difference(this.state.additionalUsers, activeUsers));
+																		// console.log('userhasorgs: ', userHasOrgs);
+																		// console.log('isInOrg: ', isInOrg);
 																		return (
 																			<div
-																				className={styles.userButton}
-																				onClick={() => this.addUser(item.dataId)}
+																				className={
+																					cx(styles.userButton,
+																						(isInOrg ? styles.active : '')
+																					)}
+																				onClick={() => this.toggleUser2(
+																					item,
+																					(isInOrg ? 'remove' : 'add')
+																					)}
 																				key={index}
 																				>
 																					{ isInOrg ?
-																						<div>Yeah in this org</div>
+																						<div className={styles.userAction}>
+																							<Icon icon="cross" size={12} color="green" />
+																						</div>
 																						:
-																						<div>Nah no</div>
+																						<div className={styles.userAction}>
+																							<Icon icon="plus" size={12} color="white" />
+																						</div>
 																					}
 																				<MediaItem
 																					content={item.fullName}
@@ -271,6 +297,30 @@ export default class AdminEdit extends Component {
 															additionalData.projectedAgreementCount}</span>
 													</Column>
 												</Row>
+												<Row>
+													<Column>
+														<h4 className={styles.subtitle}>Entered Agreement Count</h4>
+														<span>{additionalData &&
+															additionalData.enteredAgreementCount}</span>
+													</Column>
+												</Row>
+											</Section>
+											<Section hasDivider>
+													<h4> Admin Users</h4>
+														<MediaItemList
+															data={this.state.activeUsers}
+															type="user"
+														/>
+													<h4>Inactive Users</h4>
+													{
+														inactiveUsers ?
+														inactiveUsers.map((item) => {
+															return (
+																<div>{item.dataId}</div>
+															);
+														})
+														: null
+													}
 											</Section>
 										</Column>
 										</Row>
@@ -290,22 +340,14 @@ export default class AdminEdit extends Component {
     );
   }
   setupPage = (paramOrgId) => {
-		console.log('setting up');
 		let orgId = paramOrgId || this.props;
 		console.log('set up org Id', orgId);
-/*
-	  if (paramOrgId) {
-		  orgId = paramOrgId;
-	  } else {
-			orgId = this.props;
-	  }
-*/
 		const supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
 		const user = supportalStorage.user;
 		const orgs = supportalStorage.orgs;
 		// let thisAdditionalOrg = _.find(orgs, { dataId: parseFloat(orgId)}); //eslint-disable-line
 		let orgData = _.find(orgs, { id: parseFloat(orgId)}); //eslint-disable-line
-		console.log(orgData);
+		// console.log(orgData);
 		this.setState({
 			orgId,
 			user,
@@ -329,63 +371,19 @@ export default class AdminEdit extends Component {
 			context: this,
 			state: 'additionalUsers',
 			asArray: true
+		}, function () {
+			this.adminUsers();
 		});
 	}
-	getCurrentUsers = () => {
-		let currentUsers = [];
-		currentUsers = this.state.additionalData && this.state.additionalData.users;
-		if (currentUsers) {
-			return (
-				<span>dddd</span>
-/*
-					currentUsers.users((item, index) => {
-						return (
-							<div className={styles.assignedUser}>
-							<MediaItem
-								content={item.fullName}
-								username={item.fullName}
-								imageUrl={item.img}
-								type="user"
-								key={index}
-								/>
-								</div>
-						);
-					})
-*/
-			);
-		}
+	getActiveUsers = () => {
+		const { orgId } = this.state;
+		base.syncState(`orgUsers/${orgId}`, {
+			context: this,
+			state: 'activeUsers',
+			asArray: true
+		});
 	}
-	addUser = (newDataId) => {
-		const { additionalData, additionalUsers } = this.state;
-		console.log(newDataId, additionalData, additionalUsers);
-		let currentUsersObj = additionalData.users;
-		console.log('current users are: ', currentUsersObj);
-		let newUsers = currentUsersObj;
-		let userIsCurrent = _.find(currentUsersObj, { 'dataId': newDataId}); // eslint-disable-line
-		console.log(userIsCurrent);
-		if (userIsCurrent) {
-			console.log('then we should remove it');
-			console.log('existing newUser array: ', newUsers);
-			newUsers = _.pullAllWith(newUsers, [userIsCurrent], _.isEqual);
-			console.log('now it is: ', newUsers);
-		} else {
-			console.log('then we should add it');
-			additionalUsers.forEach((item) => {
-				console.log('checking whether item.dataId', item.dataId);
-				console.log('is the same as', newDataId);
-				if (item.dataId === newDataId) {
-					console.log('yes, it will exist', item);
-					newUsers.push(item);
-				}
-			});
-		}
-		console.info('thus, the new user array is: ', newUsers);
-		this.setState({
-			additionalData: {
-				...this.state.additionalData, users: newUsers }
-			}, () => { console.log('its now updated'); }
-		);
-	}
+
 	showAdditionalInfo = () => {
 		const { additionalData } = this.state;
 		if (!additionalData) {
@@ -407,9 +405,81 @@ export default class AdminEdit extends Component {
 			);
 		}
 	}
+	adminUsers = () => {
+		const { additionalUsers, additionalData, activeUsers, inactiveUsers } = this.state;
+		console.log('additionalUsers, additionalData, activeUsers, inactiveUsers',
+			additionalUsers, additionalData, activeUsers, inactiveUsers);
+		// const orgId = this.props.params.dataId;
+			// let indexToDelete = _.findIndex(tempArray, {dataId: 9}); //eslint-disable-line
+			// console.log('indexToDelete is :', indexToDelete);
+			let splicedData = additionalUsers.slice();
+			// splicedData = splicedData.filter((arr, i) => i !== indexToDelete);
+			// console.log('splicedData is :', splicedData);
+			this.setState({inactiveUsers: splicedData}); // update state
+		}
 
 	doExit = () => {
 		browserHistory.push('/admin');
+	}
+
+	toggleUser2 = (userObject, action) => {
+		const { orgId } = this.state;
+		let useData = {[userObject.dataId]: userObject}; // eslint-disable-line
+		console.log('useData: ', useData);
+		if (action === 'add') {
+			base.update(`orgUsers/${orgId}`, {
+			data: useData,
+			then(err) {
+				if (!err) {
+					console.log('done adding user');
+				} else {
+					console.error(err);
+				}
+			}
+			});
+		}
+		if (action === 'remove') {
+			const { activeUsers } = this.state;
+			let thisId = userObject.dataId;
+			let tempArray = Object.values(activeUsers);
+			let indexToDelete = _.findIndex(tempArray, {dataId: thisId}); //eslint-disable-line
+			let splicedData = activeUsers.slice();
+			splicedData = splicedData.filter((arr, i) => i !== indexToDelete);
+			this.setState({activeUsers: splicedData}); // update state
+		}
+	}
+
+	toggleUser = (userId, action) => {
+		const { orgId } = this.state;
+		console.log('userId and org id are: ', userId, orgId);
+		if (action === 'add') {
+			// let useData = {[orgId]: {'dataId': orgId}}; // eslint-disable-line
+			let useData = {[userId]: {'dataId': userId}}; // eslint-disable-line
+			console.log(useData);
+			// base.update(`orgUsers/${orgId}/${userId}`, {
+			base.update(`orgUsers/${orgId}`, {
+			data: useData,
+			then(err) {
+				if (!err) {
+					console.log('done');
+				} else {
+					console.error(err);
+				}
+			}
+			});
+		}
+		if (action === 'remove') {
+			const { activeUsers } = this.state;
+			console.log('set of activeUsers to remove', activeUsers);
+			let tempArray = Object.values(activeUsers);
+			console.log('tempArray is: ', tempArray);
+			let indexToDelete = _.findIndex(tempArray, {dataId: 9}); //eslint-disable-line
+			console.log('indexToDelete is :', indexToDelete);
+			let splicedData = activeUsers.slice();
+			splicedData = splicedData.filter((arr, i) => i !== indexToDelete);
+			console.log('splicedData is :', splicedData);
+			this.setState({activeUsers: splicedData}); // update state
+		}
 	}
 
 	handleChangeComplete = (color) => {
@@ -431,7 +501,6 @@ export default class AdminEdit extends Component {
 		console.log(page);
 		this.toggleTransition();
 		setTimeout(() => {
-			// this.toggleLoading();
 			this.toggleTransition();
 			}, 800);
 		setTimeout(() => {
@@ -448,6 +517,28 @@ export default class AdminEdit extends Component {
 			transition: !this.state.transition
 		});
 	};
+	doUpdateRefresh = () => {
+		console.info('Edit component updated');
+	}
+	doUpdateActiveUsers = () => {
+		const { additionalUsers, activeUsers } = this.state;
+		console.log('additionalUsers, activeUsers, ', additionalUsers, activeUsers);
+		const orgId = this.props.params.dataId;
+		const tempActiveUsers = [];
+		let activeUserSet = tempActiveUsers.map((item) => {
+			let userHasOrgs = item.orgs;
+			let isInOrg = false;
+			if (userHasOrgs) {
+				isInOrg = _.find(item.orgs, { 'dataId': parseFloat(orgId)}); //eslint-disable-line	
+			}
+			return (isInOrg);
+		});
+
+		console.log('activeUserSet', activeUserSet);
+		this.setState({
+			activeUsers: activeUserSet
+		});
+	}
 
 	// PROPS
 	static propTypes = {
@@ -468,4 +559,45 @@ export default class AdminEdit extends Component {
 					...this.state.additionalData, users: newUsers }
 				});
 			});
+*/
+/*
+	adminUsers = () => {
+		const { additionalUsers, additionalData, activeUsers } = this.state;
+		console.log('additionalUsers, additionalData, activeUsers',
+			additionalUsers, additionalData, activeUsers);
+		const orgId = this.props.params.dataId;
+		let thisUserList = additionalUsers.map((item, index) => {
+					let userHasOrgs = item.orgs;
+					let isInOrg = false;
+					if (userHasOrgs) {
+						isInOrg = _.find(item.orgs, { 'dataId': parseFloat(orgId)}); //eslint-disable-line
+					}
+					return (
+						<span
+							key={index}
+							>
+						{ isInOrg ?
+							<MediaItem
+								content={item.fullName}
+								username={item.fullName}
+								imageUrl={item.img}
+								type="user"
+								/>
+						: null
+						}
+						</span>
+					);
+				});
+
+		return (
+			<span> testing
+			{thisUserList}
+			</span>
+		);
+	}
+	*/
+/*
+
+<h4>AdminUsers2 </h4>
+	{this.adminUsers()}
 */

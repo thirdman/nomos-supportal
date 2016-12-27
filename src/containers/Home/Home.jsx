@@ -9,6 +9,7 @@ import {
 import {
 	Avatar,
 	// Button,
+	Date,
 	Column,
 	Files,
 	HorizontalRule,
@@ -64,8 +65,6 @@ export default class Home extends Component {
 			console.log('sectionId does not exist:');
 		}
 		this.setupPage(this.props.params.dataId);
-		// this.getUsers(this.props.params.dataId);
-		// console.log(dataDetail);
 	}
 	componentDidMount() {
 		if	(this.state.activeOrgDataId) {
@@ -76,14 +75,8 @@ export default class Home extends Component {
 
 	render() {
 		const { activeOrg, activeOrgDataId, agreements, users} = this.state;
-		// console.log(activeOrgDataId, activeOrg);
-		// console.log('home params', this.props.params);
-		console.log('home props', this.props);
-		console.log('home state', this.state);
-		// const supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
-		// const user = supportalStorage.user;
-		// let agreements = this.state.orgAgreements;
-		// let users = this.state.orgUsers && this.state.orgUsers.data;
+		// console.log('home props', this.props);
+		// console.log('home state', this.state);
 		let activeAgreements = _.filter(agreements, function (o) { //eslint-disable-line
 			return o.attributes.agreementMode === 'Active';
 			});
@@ -226,24 +219,9 @@ export default class Home extends Component {
 						: null
 					}
 					{/* FAKE SUFF HERE */}
-					{this.state.additionalData && this.state.additionalData.projectedAgreementCount ? //eslint-disable-line
-						<Statistic
-						content={this.state.additionalData &&
-							this.state.additionalData.projectedAgreementCount}
-						title="Projected Agreements"
-						isAnimated
-						hasDivider />
-						: null
-					}
-					{agreements ?
-						<Statistic
-							content={agreements.length - activeAgreements.length}
-							title="Inactive"
-							isAnimated
-							hasDivider />
-						: null
-					}
-
+					<Date date={activeOrg.attributes.audit.insertedDate} />
+					<Date date={activeOrg.attributes.audit.insertedDate} type="relative" />
+					{/* ENDS FAKE STUFF */}
 				</Column>
 				<Column occupy={9}>
 					{!this.props.params.sectionId || this.props.params.sectionId === 'overview' ?
@@ -258,7 +236,7 @@ export default class Home extends Component {
 							}
 							</Section>
 							<Section title="Agreements" hasDivider>
-								{agreements && 'ggg' === 'sss' ?
+								{agreements ?
 									<Row>
 										<Column occupy={3}>
 											{agreements ?
@@ -270,11 +248,14 @@ export default class Home extends Component {
 												: null }
 										</Column>
 										<Column occupy={3}>
+											{agreements ?
 											<Statistic
 												content={agreements && activeAgreements.length}
 												title="Active"
 												isAnimated
 												hasDivider />
+												: null
+											}
 										</Column>
 										<Column occupy={3}>
 											{agreements ?
@@ -301,23 +282,26 @@ export default class Home extends Component {
 								}
 							</Section>
 							<Section title="Account" hasDivider>
-								{activeOrg && 'ggg' === 's' ?
 									<Row>
 										<Column occupy={3}>
-											{agreements ?
-											<Statistic
-												title="Created"
-												content={moment(activeOrg.attributes.audit.insertedDate).format('DD MMM, YYYY')} //eslint-disable-line
-												// isAnimated
-												hasDivider />
-												: null }
+											{activeOrg ?
+												<Statistic
+													title="Created"
+													content={moment(activeOrg.attributes.audit.insertedDate).format('DD MMM, YYYY')} //eslint-disable-line
+													// isAnimated
+													hasDivider />
+													: null
+												}
 										</Column>
 										<Column occupy={3}>
-											<Statistic
-												title="Updated"
-												content={(moment(activeOrg.attributes.audit.updatedDate).format('DD MMM, YYYY')).toString()} //eslint-disable-line
-												// isAnimated
-												hasDivider />
+											{activeOrg ?
+												<Statistic
+														title="Updated"
+														content={(moment(activeOrg.attributes.audit.updatedDate).format('DD MMM, YYYY')).toString()} //eslint-disable-line
+														// isAnimated
+														hasDivider />
+													: null
+												}
 										</Column>
 										<Column occupy={3}>
 												<Statistic
@@ -327,16 +311,15 @@ export default class Home extends Component {
 													hasDivider />
 										</Column>
 										<Column occupy={3}>
-											{this.state.activeOrgDataId &&
-												<Statistic
-												content={activeOrgDataId}
-												title="Organisation Id"
-												hasDivider />
-											}
+												{activeOrgDataId ?
+													<Statistic
+													content={activeOrgDataId}
+													title="Organisation Id"
+													hasDivider />
+													: null
+												}
 										</Column>
 									</Row>
-									: null
-								}
 								</Section>
 						</Section>
 						: null
@@ -344,6 +327,17 @@ export default class Home extends Component {
 					{this.props.params.sectionId && this.props.params.sectionId === 'agreements' ?
 						<Section title="Agreements">
 							{agreements && agreements.map((item, index) => {
+								let thisExtraData = () => {
+									return (
+										<span>
+											<span>{moment(item.attributes.insertedDate).format('DD MMM, YYYY')}}</span>
+											<span> | </span>
+											<span>{moment(item.attributes.updatedDate).format('DD MMM, YYYY')}}</span>
+											<span> | </span>
+											<span><Date date={item.attributes.updatedDate} type="relative" /></span>
+										</span>
+									);
+								};
 								return (
 									<div className={styles.agreementItem} key={index}>
 										<ObjectInfo
@@ -351,9 +345,12 @@ export default class Home extends Component {
 											id={(item.id).toString()}
 											type={'agreement'}
 											subType={item.attributes.agreementType}
+											additionalContent={''}
 											// classNameProps={[item.attributes.agreementMode ? 'isInactive' : '']}
 											// display="small"
 											/>
+											{thisExtraData}
+											dsf
 									</div>
 								);
 							})
@@ -535,6 +532,12 @@ export default class Home extends Component {
 			console.log('App error is', error);
 			console.log('the app data org is', error);
 		});
+	}
+
+	showDate = (timestamp) => {
+		return (
+			<Date date={timestamp} type="absolute" />
+		);
 	}
 
 	/* OLD THINGS */

@@ -43,13 +43,38 @@
 		margin-right: 4px;
 	}
 	.userButton{
-		background: rgba(0,0,0,.05);
-		padding: 8px;
+		// background: rgba(0,0,0,.05);
+		padding: 8px 16px;
 		border-radius: 4px;
 		margin-bottom: 8px;
+		margin-right: 16px;
+		display: inline-block;
+		position: relative;
 		&:hover{
 			background: #fff;
 			cursor: pointer;
+		}
+		.userAction{
+			background: $nomosLightGrey;
+			border-radius: 100%;
+			width: 22px;
+			height: 22px;
+			padding: 3px;
+			border: 2px solid #f9f9f9;
+			position: absolute;
+			right: -8px;
+			top: 0;
+		}
+		&.active{
+			background: $nomosGreen;
+			.userAction{
+				background: #fff;
+				padding: 3px;
+				border: 2px solid $nomosGreen;
+			}
+			&:hover{
+				background: lighten($nomosGreen, 5%);
+			}
 		}
 	}
 }
