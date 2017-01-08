@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import cx from 'classnames';
+import { browserHistory } from 'react-router';
 import {
 	// Column,
 	MediaItem,
@@ -53,7 +54,9 @@ export default class MediaItemList extends Component {
 									type={type}
 									content={item.fullName}
 									username={item.fullName}
-									imageUrl={item.img} />
+									imageUrl={item.img}
+									onClickProps={() => this.goTo(item.dataId)}
+									/>
 							</div>
 						);
 					})
@@ -66,6 +69,9 @@ export default class MediaItemList extends Component {
 		setTimeout(() => {
 			this.setState({isLoading: false});
 			}, 300);
+	}
+	goTo = (userId) => {
+		browserHistory.push(`/profile/${userId}`);
 	}
 
 	makeId() {

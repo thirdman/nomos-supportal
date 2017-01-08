@@ -40,9 +40,9 @@ class _ApiClient {
 		methods.forEach((method) => // eslint-disable-line
 			this[method] = (path, { params, data, headers } = {}) => new Promise((resolve, reject) => {
 				const request = superagent[method](formatUrl(path));
-				console.log('* client request: ', request);
+				// console.log('* client request: ', request);
 				// if header are supplied, set header
-				console.log('* client headers:', headers);
+				// console.log('* client headers:', headers);
 				if (headers && headers.length) {
 					headers.map(({tag, value}) => { // eslint-disable-line
 						request.set(tag, value);
@@ -54,7 +54,7 @@ class _ApiClient {
 					request.set('authorization', this.jwt);
 				}
 				if (user) {
-					console.log('* client user: ', user);
+					// console.log('* client user: ', user);
 					request.set('authorisation', user.authorization);
 				}
 				// if params are supplied, send with params

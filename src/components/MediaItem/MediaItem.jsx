@@ -24,7 +24,8 @@ export default class MediaItem extends Component {
 			type = 'user',
 			userId,
 			timestamp,
-			imageUrl
+			imageUrl,
+			onClickProps
 		} = this.props;
 
 		let classes;
@@ -36,7 +37,16 @@ export default class MediaItem extends Component {
 			.map((classV) => styles[classV]).join(' ');
 
 		return (
-			<div className={cx(styles.MediaItem, classes)} key={userId}>
+			<div
+			className={
+				cx(styles.MediaItem,
+				classes,
+				onClickProps ? styles.clickable : ''
+				)
+				}
+			key={userId}
+			onClick={() => onClickProps(userId)}
+			>
 				<div className={styles.figure}>
 					<Avatar
 						type={type}

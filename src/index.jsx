@@ -15,7 +15,9 @@ import {
 	AdminEdit,
 	Home,
 	Login,
-	Orgs
+	Orgs,
+	Profile,
+	ProfileEdit
 	} from 'containers';
 
 const AuthHelper = {
@@ -30,20 +32,13 @@ const AuthHelper = {
 				reject();
 			} else {
 				console.log('accepting user');
-				// client.setJwt(window.localStorage.token);
-				// this.jwtAuth()
-				// TEMPORARY CREATE USER
 				this.setUser()
 				.then((res) => {
 					const data = res.data[0];
 					console.log('now on the res bit, data: ', data);
 					console.log('now on the res bit, data: ', res);
-					// this.saveJwt(data.authorization);
-					// this.updateUser({ username: data.username });
-					// this.getOrgs();
 					resolve();
 				}).catch((err) => {
-					// this.clearJwt();
 					console.log('an error happened in checkLogged in');
 					reject(err);
 				});
@@ -52,18 +47,6 @@ const AuthHelper = {
 	},
 	setUser() {
 		console.log('setuser called, there should now be a user set (again!)');
-/*
-		const tempUser = {
-			username: 'dave',
-			password: 'Alasdair123',
-			authorization: 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
-			eyJ1c2VybmFtZSI6ImRhdmUiLCJ1c2VyTG9naW5TeXNpZCI6MiwiaWF0Ijox
-			NDgxOTQzNzM0LCJleHAiOjE0ODIxMTY1MzR9.
-			2pxAcI7zT_OADjiZ5D5HqWOo0V9fqGyFo0A_CV5pU3s' // eslint-disable-line
-			};
-			const tempObject = {user: tempUser};
-			localStorage.setItem('nomosSupportal', JSON.stringify(tempObject));
-*/
 	}
 };
 
@@ -84,58 +67,45 @@ const requireLogin = (nextState, replace, cb) => {
 	});
 };
 
-/*
-	const onLogin = () => {
-		console.log('onLogin called');
-		console.log('will now redirect.');
-		return true;
-	};
-*/
-/*
-	const onLogin = (nextState, replace, cb) => {
-		console.log('onLogin2 called');
-		AuthHelper.checkLoggedIn()
-			.then(() => {
-				console.log('checkked, now showing login page?');
-				cb();
-			})
-			.catch(() => {
-				console.log('checkked error, now showing login page?');
-				cb();
-			});
-	};
-*/
-	function loggedIn() {
+
+	// UTILITES USED BELOW
+	function isLoggedIn() {
 		const supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
 		const user = supportalStorage.user;
-		console.log('+ does user esist? supportalStorage.user: ', user);
 		if (user) {
 			return true;
 		} else {
 			return false;
 		}
 	}
+
+	function logout() {
+		const tempObject = {user: null};
+		localStorage.setItem('nomosSupportal', JSON.stringify(tempObject));
+		// browserHistory.push('/login');
+	}
+
+
 	function requireAuth(nextState, replace, callback) {
-		// console.log('requireauth nextState, replace:', nextState, replace);
-		// console.log('callback:', callback);
-		if (loggedIn()) {
+		if (isLoggedIn()) {
 			console.log('+ logged in so calling callback...');
 			callback(); // When async finishes, do the redirect
 		}
-		if (!loggedIn()) {
-			// console.log(this);
-			// this.props.history && this.props.history.push('/testi');
+		if (!isLoggedIn()) {
+			logout(); // blats all the data
 			replace({
 				pathname: '/login'
 			});
 		}
 	}
+
 	function updateData(nextState, replace, callback) {
-		console.log(nextState, replace);
+		// thus function is for future use.
+		// console.log(nextState, replace);
 		callback();
 	}
+
 	console.log(typeof requireLogin);
-	// console.log(onLogin);
 
 ReactDOM.render(
 	<Router history={browserHistory}>
@@ -144,10 +114,14 @@ ReactDOM.render(
 			<Route path="/login" component={Login} />
 			<Route path="/orgs" component={Orgs} onEnter={requireAuth} />
 			<Route path="/home" component={Home} onEnter={requireAuth} />
-			<Route path="/home/:dataId" component={Home} onEnter={updateData} />
+			<Route path="/home/:dataId" component={Home} onEnter={requireAuth} />
 			<Route path="/home/:dataId(/:sectionId)" component={Home} onEnter={updateData} />
 			<Route path="/admin" component={Admin} />
 			<Route path="/admin/:dataId" component={AdminEdit} />
+			<Route onEnter={requireAuth}>
+				<Route path="/profile/" component={ProfileEdit} />
+				<Route path="/profile/:dataId" component={Profile} />
+			</Route>
 			<Route onEnter={requireLogin}>
 				<Route path="/upload/" component={Home} />
 			</Route>

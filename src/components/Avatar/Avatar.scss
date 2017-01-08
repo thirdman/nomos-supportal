@@ -3,6 +3,7 @@
 $sizeSmall: 24px;
 $sizeMedium: 32px;
 $sizeLarge: 100px;
+$sizeXLarge: 200px;
 
 .Avatar{
 	width: $sizeSmall;
@@ -48,6 +49,13 @@ $sizeLarge: 100px;
 		height: $sizeLarge;
 		.iconWrap{
 			width: $sizeLarge;
+		}
+	}
+	&.xlarge{
+		width: $sizeXLarge;
+		height: $sizeXLarge;
+		.iconWrap{
+			width: $sizeXLarge;
 		}
 	}
 	&.fill{

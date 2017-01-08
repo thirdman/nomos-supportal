@@ -17,12 +17,132 @@ const client = require('../../helpers/ApiClient.js');
 export default class Login extends Component {
 
 	state = {
+		loading: true,
 		orgs: null,
 		error: null,
 		processing: false,
 		processingOrgs: false
 	}
+	componentDidMount() {
+		this.toggleLoading();
+	}
+	render() {
+		const { error } = this.state;
+		// blatting user info
+		const tempObject = {user: null};
+		localStorage.setItem('nomosSupportal', JSON.stringify(tempObject));
+		// const { user } = this.state;
+		// let supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
+		// const user = supportalStorage.user;
+		// const orgs = supportalStorage.orgs;
 
+		return (
+		<span>
+			<div
+				className={
+					cx(
+						styles.loginPage,
+						globalStyles.container,
+						this.state.processing ? styles.processing : ''
+						)
+					}
+				key={'layoutMain'}
+				>
+				<div className={styles.container}>
+					<div className={cx(styles.loginCard)}>
+						<form onSubmit={this.handleSubmit}>
+							<div className="form-group">
+								<h2>{'Login'}</h2>
+								<div
+									className={cx(globalStyles.contentItem,
+										globalStyles.hasValidation,
+										globalStyles.required)}>
+									<ContentItem hasPadding={false}>
+										<InputText
+											placeholder="Username/Email"
+											isRequired
+											hasRequiredIcon={false}
+											ref={(ref) => this.usernameInput = ref} // eslint-disable-line
+											placeholderBelow
+											onKeyDownProps={this.quickSubmit}
+										/>
+									</ContentItem>
+								</div>
+								<div
+									className={cx(globalStyles.contentItem,
+										globalStyles.hasValidation,
+										globalStyles.required)}>
+										<ContentItem hasPadding={false}>
+											<InputText
+												id="password"
+												type="password"
+												placeholder="Password"
+												ref={(ref) => this.passwordInput = ref} // eslint-disable-line
+												isRequired
+												placeholderBelow
+												hasRequiredIcon={false}
+												onKeyDownProps={this.quickSubmit}
+											/>
+										</ContentItem>
+								</div>
+								<Row>
+									<ContentItem>
+										<Button
+											content="Log In"
+											isHighlighted
+											classNameProps={['large']}
+											isActive={this.state.processing || false}
+											onClickProps={this.handleSubmit}
+											/>
+									</ContentItem>
+								</Row>
+							</div>
+						</form>
+						<div
+							className={
+								cx(styles.formInstructions,
+									this.state.error ? styles.errorInstructions : ''
+								)}
+							>
+							{(this.state.error) &&
+								<ContentItem>
+									{error.title ?
+										<h2>{error.title}</h2>
+										: null }
+									{
+										error.detail ?
+										<Info content={error.detail} />
+										:
+										<Info content={error || 'Failed to log in'} />
+									}
+								</ContentItem>
+							}
+							{ !error ?
+								<p>{`The nomos one supportal allows you to see the
+									process of onboarding your data. Please use the supplied
+									email and password details to login.`}</p>
+								: null
+							}
+						</div>
+					</div>
+				</div>
+				{this.state.orgs ?
+					<span>
+						<UiOrgSelect organisationData={this.state.orgs} />
+					</span>
+					:
+					null
+				}
+				{this.state.processingOrgs ?
+					<div>Loading Orgs</div>
+					: null
+				}
+			</div>
+		</span>
+		);
+	}
+
+	// MAIN FUNCTIONS
 	handleSubmit = (event) => {
 		if (event) { event.preventDefault(); }
 		this.setState({error: null});
@@ -32,7 +152,6 @@ export default class Login extends Component {
 			return false;
 		}
 		this.login({username, password});
-		// this.tempLogin({username, password});
 		this.usernameInput.value = '';
 		this.passwordInput.value = '';
 	}
@@ -52,14 +171,12 @@ export default class Login extends Component {
 		}).then((res) => {
 			this.setState({processing: false});
 			const data = res.data[0];
-			// this.saveJwt(data.authorization);
 			client.setJwt(data.authorization);
 			const tempObject = {user: data};
 			localStorage.setItem('nomosSupportal', JSON.stringify(tempObject));
-			const supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
-			console.log('supportalStorage have been set as: ', supportalStorage);
-			this.getOrgs();
-			// this.proceedToNextPath();
+			browserHistory.push('/orgs');
+			// SHOW THE ORGS TO SELECCT FROM
+			// this.getOrgs();
 
 			// UNUSED THINGS FROM V5 TO DO LATER
 			// this.saveJwt(data.authorization);
@@ -76,145 +193,13 @@ export default class Login extends Component {
 		});
 	}
 
-
-	render() {
-		// const { auth } = this.state;
-		// const check = this.check();
-		const { error } = this.state;
-		let supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
-		console.log('hey, supportalStorage: ', supportalStorage);
-		const user = supportalStorage.user;
-		const orgs = supportalStorage.orgs;
-		if (orgs) {
-			this.setState({
-				hasOrgs: false,
-				orgs
-			});
-		}
-		console.log(user, orgs);
-		return (
-		<span>
-			<div
-				className={
-					cx(
-						styles.loginPage,
-						globalStyles.container,
-						this.state.processing ? styles.processing : ''
-						)
-					}
-				key={'layoutMain'}
-				>
-				{!user &&
-					<div className={styles.container}>
-						<div className={cx(styles.loginCard)}>
-							<form onSubmit={this.handleSubmit}>
-								<div className="form-group">
-									<h2>{'Login'}</h2>
-									<div
-										className={cx(globalStyles.contentItem,
-											globalStyles.hasValidation,
-											globalStyles.required)}>
-										<ContentItem hasPadding={false}>
-											<InputText
-												placeholder="Username/Email"
-												isRequired
-												hasRequiredIcon={false}
-												ref={(ref) => this.usernameInput = ref} // eslint-disable-line
-												placeholderBelow
-												onKeyDownProps={this.quickSubmit}
-											/>
-										</ContentItem>
-									</div>
-									<div
-										className={cx(globalStyles.contentItem,
-											globalStyles.hasValidation,
-											globalStyles.required)}>
-											<ContentItem hasPadding={false}>
-												<InputText
-													id="password"
-													type="password"
-													placeholder="Password"
-													ref={(ref) => this.passwordInput = ref} // eslint-disable-line
-													isRequired
-													placeholderBelow
-													hasRequiredIcon={false}
-													onKeyDownProps={this.quickSubmit}
-												/>
-											</ContentItem>
-									</div>
-									<Row>
-										<ContentItem>
-											<Button
-												content="Log In"
-												isHighlighted
-												classNameProps={['large']}
-												isActive={this.state.processing || false}
-												onClickProps={this.handleSubmit}
-												/>
-										</ContentItem>
-									</Row>
-								</div>
-							</form>
-							<div
-								className={
-									cx(styles.formInstructions,
-										this.state.error ? styles.errorInstructions : ''
-									)}
-								>
-								{(this.state.error) &&
-									<ContentItem>
-										{error.title ?
-											<h2>{error.title}</h2>
-											: null }
-										{
-											error.detail ?
-											<Info content={error.detail} />
-											:
-											<Info content={error || 'Failed to log in'} />
-										}
-									</ContentItem>
-								}
-								{ !error ?
-									<p>{`The nomos one supportal allows you to see the
-										process of onboarding your data. Please use the supplied
-										email and password details to login.`}</p>
-									: null
-								}
-							</div>
-						</div>
-					</div>
-				}
-				{this.state.orgs ?
-					<span>
-						<UiOrgSelect organisationData={this.state.orgs} />
-					</span>
-					:
-					null
-				}
-				{user && 'ggg' === 'bbb' &&
-					<div className={styles.container}>
-						{supportalStorage.user ?
-							<p>{`You are currently logged in as "${supportalStorage.user.username}"`}</p>
-							:
-							<p>{'You are currently logged in'}</p>
-						}
-						<ContentItem>
-							<Button
-								content="Log Out"
-								onClickProps={this.logout}
-								/>
-						</ContentItem>
-					</div>
-				}
-				{this.state.processingOrgs ?
-					<div>Loading Orgs</div>
-					: null
-				}
-			</div>
-		</span>
-		);
-	}
 	// UTILITY FUNCTIONS
+	toggleLoading = () => {
+		this.setState({
+			loading: !this.state.loading
+		});
+	};
+
 	check = () => {
 		let supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
 		const user = supportalStorage.user;
@@ -230,14 +215,7 @@ export default class Login extends Component {
 	logout = () => {
 		const tempObject = {user: null};
 		localStorage.setItem('nomosSupportal', JSON.stringify(tempObject));
-		this.proceedToNextPath('/login');
-	}
-
-
-	proceedToNextPath = (path) => {
-		// const nextPath = path || '/home';
-		const nextPath = path || '/';
-		browserHistory.push(nextPath);
+		browserHistory.push('/login');
 	}
 
 	validateInput = (username, password) => {
@@ -258,6 +236,7 @@ export default class Login extends Component {
 		}
 	}
 
+	// PROBABLY UNUSED
 	getOrgs = () => {
 		this.setState({processingOrgs: true});
 		client.get('/organisations').then((res) => {
@@ -270,7 +249,6 @@ export default class Login extends Component {
 		// this.orgs = orgs;
 		this.setState({
 			orgs,
-			hasOrgs: true,
 			processingOrgs: false
 		});
 		const supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
@@ -283,29 +261,6 @@ export default class Login extends Component {
 		// const temporgs = supportalStorage.orgs;
 		console.log('supportalStorage have been set as: ', supportalStorage);
 		// console.log('orgs have been set as: ', temporgs);
-	}
-
-/*
-	getOrgs = () => {
-		const theData = dataOrgs.data;
-		// const supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
-		// const user = supportalStorage.user;
-		this.setState({
-			orgs: theData
-		});
-	}
-*/
-
-	tempLogin = ({username, password}) => {
-		console.log('templogin called, username and password:', username, password);
-		const tempUser = {
-			username: 'dave',
-			password: 'Alasdair123',
-			authorization: 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRhdmUiLCJ1c2VyTG9naW5TeXNpZCI6MiwiaWF0IjoxNDgxOTQzNzM0LCJleHAiOjE0ODIxMTY1MzR9.2pxAcI7zT_OADjiZ5D5HqWOo0V9fqGyFo0A_CV5pU3s' // eslint-disable-line
-			};
-			const tempObject = {user: tempUser};
-			localStorage.setItem('nomosSupportal', JSON.stringify(tempObject));
-			this.proceedToNextPath();
 	}
 
 }

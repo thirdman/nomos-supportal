@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
+// import cx from 'classnames';
 import moment from 'moment';
-	// import superagent from 'superagent';
 import {
-	// Link,
 	browserHistory
 	} from 'react-router';
 import {
@@ -13,15 +12,19 @@ import {
 	Column,
 	Files,
 	HorizontalRule,
-	// Icon,
+	Icon,
 	LoadingAnimation,
 	ObjectInfo,
 	ProgressBar,
 	Row,
 	Statistic,
+	StatisticBars,
 	Section,
 	SubNavWrap,
 	TransitionAnimation,
+	WidgetColumns,
+	WidgetPie,
+	WidgetLineGraph
 	} from 'components';
 import { Chat } from 'containers';
 
@@ -67,6 +70,7 @@ export default class Home extends Component {
 		this.setupPage(this.props.params.dataId);
 	}
 	componentDidMount() {
+		this.getOrgData(this.state.activeOrgDataId);
 		if	(this.state.activeOrgDataId) {
 			this.getAdditionalData(this.state.activeOrgDataId);
 		}
@@ -74,7 +78,7 @@ export default class Home extends Component {
 	}
 
 	render() {
-		const { activeOrg, activeOrgDataId, agreements, users} = this.state;
+		const { activeOrg, activeOrgDataId, agreements, users, orgUsers} = this.state;
 		// console.log('home props', this.props);
 		// console.log('home state', this.state);
 		let activeAgreements = _.filter(agreements, function (o) { //eslint-disable-line
@@ -85,6 +89,12 @@ export default class Home extends Component {
 			this.state.additionalData &&
 			this.state.additionalData.color) || 'transparent'
 		};
+		const tempPieData = [
+			{name: 'test 1', value: 24},
+			{name: 'test 2', value: 10},
+			{name: 'test 3', value: 3}
+			];
+
 		return (
 			<div className={styles.Home}>
 					<Row>
@@ -138,7 +148,9 @@ export default class Home extends Component {
 								{label: 'Agreements', link: `/home/${this.props.params.dataId}/agreements`, name: 'agreements'}, //eslint-disable-line
 								{label: 'Account', link: `/home/${this.props.params.dataId}/account`, name: 'Account'}, //eslint-disable-line
 								{label: 'Files', link: `/home/${this.props.params.dataId}/files`, name: 'files'}, //eslint-disable-line
-								{label: 'Messages', link: `/home/${this.props.params.dataId}/messages`, name: 'messages'} //eslint-disable-line
+								{label: 'Messages', link: `/home/${this.props.params.dataId}/messages`, name: 'messages'}, //eslint-disable-line
+								{label: 'Graphs', link: `/home/${this.props.params.dataId}/graphs`, name: 'graphs'}, //eslint-disable-line
+								{label: 'Pie', link: `/home/${this.props.params.dataId}/pie`, name: 'pie'} //eslint-disable-line
 							]}
 						/>
 					</Row>
@@ -169,51 +181,28 @@ export default class Home extends Component {
 								);
 							})
 						}
-						{this.state.additionalData ?
+						{orgUsers && orgUsers[activeOrgDataId] ?
 							(<div>
 								<h4>Support Team</h4>
-								<div className={styles.userItem} style={{width: '100%'}}>
-									<Avatar
-										size="small"
-										type="user"
-										imageUrl="https://pbs.twimg.com/profile_images/499700835509469185/OQgR3hvm_400x400.jpeg"
-										title={`Onboarding Manager: ${this.state.additionalData.rep}`}
-										defaultIconColor="#eee"
-										/>
-									<span className={styles.userTitle}>
-										{this.state.additionalData.rep}
-									</span>
-								</div>
+								{orgUsers[activeOrgDataId].map((item, index) => (
+									<div className={styles.userItem} style={{width: '100%'}} key={index}>
+										<Avatar
+											size="small"
+											type="user"
+											imageUrl={item.img || null}
+											title={item.fullName || null}
+											/>
+										<span className={styles.userTitle}>
+											{item.fullName || null}
+										</span>
+									</div>
+									))
+								}
 							</div>
 							)
 							: null
 						}
 					</Row>
-					{this.state.additionalData && 'ggg' === 'bbb' ?
-						(<span className={styles.additionalData}>
-							<h3>Additional Data</h3>
-							<Row>
-								<Column occupy={12}>
-									<h4 className="subtitle">contact</h4>
-									<span>{this.state.additionalData.rep}</span>
-								</Column>
-								<Column occupy={12}>
-									<h4 className="subtitle">id</h4>
-									<span>{this.state.additionalData.dataId}</span>
-								</Column>
-								<Column occupy={12}>
-									<h4 className="subtitle">color</h4>
-									<span>{this.state.additionalData.color}</span>
-								</Column>
-								<Column occupy={12}>
-									<h4 className="subtitle">Status</h4>
-									<span>{this.state.additionalData.status}</span>
-								</Column>
-							</Row>
-						</span>
-						)
-						: null
-					}
 					{this.state.additionalDataLoading ?
 						<span><LoadingAnimation /> loading additional content...</span>
 						: null
@@ -260,7 +249,7 @@ export default class Home extends Component {
 										<Column occupy={3}>
 											{agreements ?
 												<Statistic
-													content={12}
+													content={agreements ? agreements.length - activeAgreements.length : 0}
 													title="Inactive"
 													isAnimated
 													hasDivider />
@@ -274,6 +263,20 @@ export default class Home extends Component {
 												title="Projected Agreements"
 												isAnimated
 												hasDivider />
+												: null
+											}
+										</Column>
+									</Row>
+									: null
+								}
+								{agreements ?
+									<Row>
+										<Column occupy={6}>
+											{this.showTopAgreements()}
+										</Column>
+										<Column occupy={6}>
+											{this.state.additionalData ?
+												this.showAgreementsPie()
 												: null
 											}
 										</Column>
@@ -329,28 +332,59 @@ export default class Home extends Component {
 							{agreements && agreements.map((item, index) => {
 								let thisExtraData = () => {
 									return (
-										<span>
-											<span>{moment(item.attributes.insertedDate).format('DD MMM, YYYY')}}</span>
-											<span> | </span>
-											<span>{moment(item.attributes.updatedDate).format('DD MMM, YYYY')}}</span>
-											<span> | </span>
-											<span><Date date={item.attributes.updatedDate} type="relative" /></span>
-										</span>
+										<Row>
+											<Column occupy={3}>
+												<h4>Created</h4>
+												<span>{moment(item.attributes.insertedDate)
+												.format('DD MMM, YYYY')}</span>
+											</Column>
+											<Column occupy={3}>
+												<h4>Updated</h4>
+												<span>{moment(item.attributes.updatedDate)
+												.format('DD MMM, YYYY')}</span>
+											</Column>
+											<Column occupy={3}>
+												<h4>Relative</h4>
+												<span><Date
+												date={item.attributes.updatedDate}
+												type="relative" /></span>
+											</Column>
+											{item.attributes.agreementMode === 'Inactive' ?
+											null
+											:
+											<Column occupy={3}>
+												<h4>Annual Rent</h4>
+												<span>{this.niceNumber(item.attributes.totalAnnualRent)}</span>
+											</Column>
+											}
+										</Row>
 									);
 								};
 								return (
-									<div className={styles.agreementItem} key={index}>
+									<div
+										className={`${styles.agreementItem} ${item.attributes.agreementMode === 'Inactive' ? styles.isInactive : ''}`} // eslint-disable-line
+										key={index}
+										>
 										<ObjectInfo
 											title={item.attributes.knownAs}
 											id={(item.id).toString()}
 											type={'agreement'}
 											subType={item.attributes.agreementType}
-											additionalContent={''}
+											additionalContent={
+												<div className={styles.modeIndicator}>
+													{item.attributes.agreementMode === 'Inactive' ?
+														null
+														:
+														<Icon icon="tick" size={16} color="green" />
+													}
+													{item.attributes.agreementMode}
+												</div>}
 											// classNameProps={[item.attributes.agreementMode ? 'isInactive' : '']}
 											// display="small"
 											/>
-											{thisExtraData}
-											dsf
+											<div className={styles.detail}>
+												{thisExtraData()}
+											</div>
 									</div>
 								);
 							})
@@ -401,7 +435,22 @@ export default class Home extends Component {
 						</Section>
 						: null
 					}
-
+					{this.props.params.sectionId && this.props.params.sectionId === 'graphs' ?
+						<Section title="Graphs">
+						{
+							agreements ?
+							this.showAgreements()
+							: null
+						}
+						</Section>
+						: null
+					}
+					{this.props.params.sectionId && this.props.params.sectionId === 'pie' ?
+						<Section title="Pie">
+							<WidgetPie title="Test percent" data={tempPieData} />
+						</Section>
+						: null
+					}
 				</Column>
 			</Row>
 	</span>
@@ -412,7 +461,9 @@ export default class Home extends Component {
 	}
 			</div>
     );
-  }
+	}
+
+	// INITIAL PAGE SETUP OF DATA.
   setupPage = (dataId) => {
 		console.log('setting up page with id of: ', dataId);
 		if (!dataId) {
@@ -421,7 +472,6 @@ export default class Home extends Component {
 		}
 		const supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
 		const theOrgs = supportalStorage.orgs;
-		// const activeOrgId = supportalStorage.activeOrgId;
 		let thisOrg;
 		const thisthing = theOrgs.map((item, index) => { // eslint-disable-line
 			if (item.id === parseFloat(dataId)) {
@@ -430,46 +480,34 @@ export default class Home extends Component {
 		});
 		this.setState({
 			orgs: theOrgs,
-			// activeOrgDataId: activeOrgId,
 			activeOrg: thisOrg,
 			orgData: thisOrg
 		});
-		this.getOrgData(dataId);
 		this.updateAccounts(thisOrg);
+		this.getOrgUsers(thisOrg);
   }
+
+	// THIS GETS ALL THE ADDITIONAL DATA FROM FIREBASE
 	getOrgData = (orgId) => {
 		this.setState({loading: true});
+		// AGREEMENTS
 		client.get(`/organisations/${orgId}/agreements`).then((res) => {
-			console.log('res is: ', res);
-			// this.updateOrgs(res.data);
+			let orderedAgreements = _.sortBy(res.data, [
+				function (item) {
+					return -item.attributes.insertedDate;
+				}
+			]);
 			this.setState({
-				agreements: res.data,
+				// agreements: res.data,
+				agreements: orderedAgreements,
 				loading: false
 				});
 		}).catch((err) => {
 			this.updateError(err.errors[0]);
 		});
-		client.get(`/organisations/${orgId}/users`).then((res) => {
-			console.log('res is: ', res);
-			// this.updateOrgs(res.data);
-			this.setState({
-				users: res.data
-				});
-		}).catch((err) => {
-			this.updateError(err.errors[0]);
-		});
-/*
-		client.get(`/organisations/${orgId}/accounts`).then((res) => {
-			console.log('accounts res is: ', res);
-		}).catch((err) => {
-			console.error(err);
-			// this.updateError(err.errors[0]);
-		});
-*/
 	}
+
   updateAccounts = (orgData) => {
-		console.log('getting accounts: ', orgData);
-		console.log('getting accounts: ', orgData.relationships.accounts.data);
 		let accountArray = orgData.relationships.accounts.data;
 		// https://api.nomosone.com/v1/organisations/1/accounts/12
 		let availableUserIds = accountArray.map((item) => {
@@ -478,46 +516,26 @@ export default class Home extends Component {
 		this.setState({
 			thisOrgUsers: availableUserIds
 		});
-/*
-		let availableAccounts;
-		client.get('/accounts').then((res) => {
-			console.log('accounts res is: ', res.data);
-			availableAccounts = res.data;
-			console.log('availableAccounts is: ', availableAccounts);
-			let theset = [{id: 1}, {id: 2}, {id: 1639}];
-			let garethArray = availableAccounts.map(({id, type}) => {
-				console.log(id, type);
-				// return availableUserIds.map(
-					// availableUserIds => availableUserIds.id).indexOf(id) > -1; // eslint-disable-line
-				return theset.map((theset.id)).indexOf(id) > -1;
-			});
-			console.log('garethArray: ', garethArray);
-			let filteredArray = availableAccounts.filter(
-				(item, id = item.id) => (availableUserIds.indexOf(id) < 0)
-				); //eslint-disable-line
-			console.log('filtered array: ', filteredArray);
-			let filteredArray1 = _.filter(availableAccounts, function (o) { //eslint-disable-line
-				return _.includes(availableAccounts, o.id);
-				});
-				console.log('filtered array1: ', filteredArray);
-		}).catch((err) => {
-			this.updateError(err.errors[0]);
-			console.error(err);
+	}
+
+	getOrgUsers = (orgId) => {
+		console.log('get users org id is: ', orgId);
+		base.syncState('orgUsers', {
+			context: this,
+			state: 'orgUsers',
+			asArray: false
 		});
-*/
 	}
 
 	getAdditionalData = (orgId) => {
 		console.log('getAdditionalData triggerend with id of', orgId);
-		this.setState({
-			additionalDataLoading: true,
-		});
+		// this.setState({
+			// additionalDataLoading: true,
+		// });
 		base.fetch(`orgs/${orgId}`, {
 		context: this,
 		asArray: false
 		}).then(data => {
-			// console.log('retrieved data:', data);
-			// console.log('this:', this);
 			this.setState({
 				additionalData: data,
 				additionalDataLoading: false,
@@ -537,6 +555,264 @@ export default class Home extends Component {
 	showDate = (timestamp) => {
 		return (
 			<Date date={timestamp} type="absolute" />
+		);
+	}
+	niceNumber = (num) => {
+		if (num >= 1000000) {
+		return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+		}
+		if (num >= 1000) {
+		return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+		}
+		return num;
+	}
+
+	updateError = (err) => {
+		console.log('There was an error', err);
+		// console.log('oh yeah and here is the status..');
+		// console.log(err.status);
+		if (parseFloat(err.status) === 401) {
+			console.log('You probably need to login, so....');
+			browserHistory.push('/login');
+		}
+	}
+
+	// GROUPS AGREEMENTS FOR BAR
+	showTopAgreements = () => {
+		const { agreements } = this.state;
+		let orderedAgreements = _.sortBy(agreements, [(item) => {
+				return -item.attributes.totalAnnualRent;
+			}
+		]);
+		let topResults = _.take(orderedAgreements, 5);
+		let barData = topResults.map((item, index) => {
+			let dataIem = {
+				_id: `topAgreement${index}`,
+				knownAs: item.attributes.knownAs,
+				amount: item.attributes.totalAnnualRent,
+				units: '$',
+				showIcon: true,
+				// imageUrl: 'http://media.rightmove.co.uk/154k/153359/59035664/153359_40054_IMG_00_0000_max_135x100.jpg',
+				icon: 'agreement',
+				type: 'agreement',
+				subType: 'Lease',
+				subSubType: 'lease'
+				};
+			return (
+				dataIem
+			);
+		});
+		return (
+			<span>
+				<StatisticBars
+					source={barData}
+					title="Top Agreements (by annual rent)"
+					isCurrency
+					// hasBackground
+					/>
+			</span>
+		);
+	}
+	// PERCENT AGREEMENTS FOR PIE
+	showAgreementsPie = () => {
+		const { agreements } = this.state;
+		const activeAgreements = _.filter(agreements, function (o) { //eslint-disable-line
+			return o.attributes.agreementMode === 'Active';
+			});
+		let additionalData = this.state.additionalData;
+		console.log('additionalData.projectedAgreementCount',
+			additionalData.projectedAgreementCount);
+		let totalProjected = additionalData.projectedAgreementCount;
+		if (!additionalData.projectedAgreementCount) {
+			console.log('no projected total so, setting as agreemetns total');
+			totalProjected = agreements && agreements.length;
+		}
+		const activeTotal = agreements && activeAgreements.length;
+		const inactiveTotal = agreements && (agreements.length - activeAgreements.length);
+		const uneneteredTotal = agreements && (totalProjected - agreements.length);
+		const pieData = [
+			{name: 'ActiveAgreements:', value: activeTotal},
+			{name: 'Inactve Agreements:', value: inactiveTotal},
+			{name: 'Projected Remaining:', value: uneneteredTotal}
+		];
+		return (
+			<WidgetPie title="Agreement Progress" data={pieData} />
+		);
+	}
+
+
+	// GROUPS AGREEMENTS FOR GRAPHS
+	showAgreements = () => {
+		const { agreements } = this.state;
+		const monthNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+		const weekNumbers = [];
+		const weekCount = 52;
+		for (let i = 0; i < weekCount; i++) {
+			weekNumbers.push(i);
+		}
+
+		let orderedAgreements = _.sortBy(agreements, [
+			function (item) {
+				return item.attributes.insertedDate;
+			}
+		]);
+		let monthsArray = [];
+		let weeksArray = [];
+		let yearsandmonthsArray = [];
+		let currentYear;
+		let groupByYear = _.groupBy(
+			orderedAgreements,
+				(item) => moment(item.attributes.insertedDate).year()
+			);
+
+		let tempGroupByMonth = _.forEach(groupByYear, (value, key) => {
+			currentYear = key;
+			let thisMonthsGrouped = _.groupBy(
+				value, (item) => moment(item.attributes.insertedDate).month()
+			);
+
+			let monthSet1 = monthNumbers.map((number) => {
+				let dataToReturn = {
+					label: `${moment().month(number).format('MMM')} ${currentYear}`,
+					amount: 0
+					};
+				let isInThis = _.find(thisMonthsGrouped,
+					(avalue, akey) => {
+						if (parseFloat(akey) === number) {
+							dataToReturn = {
+								label: `${moment().month(parseFloat(akey)).format('MMM')} ${currentYear}`,
+								amount: avalue.length,
+								data: avalue
+								};
+							return true;
+						} else {
+							return false;
+						}
+					}
+				);
+				console.info('isInThis', isInThis);
+				monthsArray.push(dataToReturn);
+				return dataToReturn;
+			});
+			console.log('monthSet1', monthSet1);
+			let yearobject = {
+				// label: groupByYear[key],
+				label: currentYear,
+				amount: value.length,
+				data: groupByYear[key]
+			};
+			yearsandmonthsArray.push(yearobject);
+			console.log('------');
+		});
+
+		let tempGroupByWeek = _.forEach(groupByYear, (value, key) => {
+			currentYear = key;
+			let thisWeekGrouped = _.groupBy(
+				value, (item) => moment(item.attributes.insertedDate).week()
+			);
+
+			let weekset = weekNumbers.map((number) => {
+				let dataToReturn = {
+					label: `Week ${moment().week(number).format('gg')} ${currentYear}`,
+					amount: 0
+					};
+				let isInThis = _.find(thisWeekGrouped,
+					(avalue, akey) => {
+						if (parseFloat(akey) === number) {
+							dataToReturn = {
+								label: `Week ${moment().week(parseFloat(akey)).format('gg')} ${currentYear}`,
+								amount: avalue.length,
+								data: avalue
+								};
+							return true;
+						} else {
+							return false;
+						}
+					}
+				);
+				console.info('isInThis', isInThis);
+				weeksArray.push(dataToReturn);
+				return dataToReturn;
+			});
+			console.log('weekset', weekset);
+			console.log('----e--');
+		});
+		console.log('tempGroupByMonth', tempGroupByMonth);
+		console.log('tempGroupByWeek', tempGroupByWeek);
+		console.log('yearsandmonthsArray', yearsandmonthsArray);
+
+		let yearData = Object.keys(groupByYear).map((key) => {
+			let theValue = {
+				amount: groupByYear[key].length,
+				label: key
+			};
+			return (theValue);
+		});
+		yearData = {values: yearData};
+		let monthData = {values: monthsArray};
+		let weekData = {values: weeksArray};
+		let monthDataForLine = monthsArray.map((item) => {
+			return (
+				{name: item.label,
+					value: item.amount
+				}
+			);
+		});
+		console.log('monthDataForLine', monthDataForLine);
+		return (
+			<span>
+				<Row>
+					<Column>
+						<WidgetColumns
+							title={'New Agreements by Year'}
+							data={yearData}
+							trimLabels={false}
+							// hasBackground
+							isAnimated
+							isFlex
+						/>
+					</Column>
+				</Row>
+				<Row>
+					<Column>
+						<WidgetColumns
+							title={'New Agreements by month'}
+							data={monthData}
+							trimLabels={false}
+							// hasBackground
+							isAnimated
+							isFlex
+						/>
+					</Column>
+				</Row>
+				<Row>
+					<Column>
+						<WidgetColumns
+							title={'New Agreements by week'}
+							data={weekData}
+							trimLabels={false}
+							// hasBackground
+							isAnimated
+							isFlex
+						/>
+					</Column>
+				</Row>
+				<Row>
+				<Column>
+					<HorizontalRule />
+				</Column>
+				</Row>
+				<Row>
+				<Column>
+					<WidgetLineGraph title="Monthly" data={monthDataForLine} />
+				</Column>
+				</Row>
+				<Row>
+				<Column>
+					<WidgetLineGraph title="test line" />
+				</Column>
+				</Row>
+			</span>
 		);
 	}
 
@@ -576,60 +852,3 @@ export default class Home extends Component {
 		});
 	};
 }
-
-/*
-		let leaseAgreements = _.filter(agreements, function (o) { //eslint-disable-line
-			return o.attributes.agreementType === 'Lease';
-			});
-		console.log('leaseAgreements: ', leaseAgreements);
-*/
-/*
-	setOrg = (orgId) => {
-		if (orgId) {
-			this.setState({
-				activeOrg: orgId
-			});
-			this.getData(orgId);
-		} else {
-			this.setState({
-				activeOrg: null
-			});
-		}
-	}
-*/
-/*
-	getOrgs = () => {
-		console.log('getting orgs');
-		console.log('dataOrgs: ', dataOrgs.data);
-		const theData = dataOrgs.data;
-		const supportalStorage = JSON.parse(localStorage.getItem('nomosSupportal')) || [];
-		const user = supportalStorage.user;
-		console.log('user', user);
-		this.setState({
-			orgs: theData
-		});
-	}
-*/
-		/*
-		client.get('/organisations').then((res) => {
-			console.log('got res: ', res);
-			this.updateOrgs(res.data);
-		}).catch((err) => {
-			this.updateError(err.errors[0]);
-		});
-*/
-/*
-		const request = superagent.get('https://dev-api.nomosone.com/v1/organisations')
-			// .send({ name: 'Manny', species: 'cat' })
-			// .set('X-API-Key', 'foobar')
-			// .set('Accept', 'application/json')
-			.set('authorisation', user.authorization)
-			.set('Content-Type', 'text/plain');
-			console.log(request);
-		request.end((err, res) => {
-			if (err) throw err;
-			console.log(res);
-		});
-
-agreements && (agreements.length - activeAgreements.length)
-*/

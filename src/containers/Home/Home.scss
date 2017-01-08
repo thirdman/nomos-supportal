@@ -103,6 +103,7 @@ section{
 	.userItem{
 		display: block;
 		position: relative;
+		min-height: 28px;
 		.userTitle{
 			margin-left: 8px;
 		}
@@ -113,8 +114,32 @@ section{
 	.agreementItem{
 		display: block;
 		position: relative;
-		padding: 8px 0;
+		padding: 0 0 8px 0;
 		width: 100%;
+		background: #f9f9f9;
+    margin-bottom: 16px;
+    border-radius: 4px;
+    box-shadow: 0px 1px 16px -8px rgba(0, 0, 0, .35);
+		border-left: 4px solid $nomosGreen;
+		.modeIndicator{
+			padding: 4px 8px;
+			border-radius: 4px;
+			// background: #f3f3f3;
+		}
+    .detail{
+	    padding: 0 8px;
+    }
+    &:hover{
+			box-shadow: 0px 1px 24px -6px rgba(0, 0, 0, .35);
+    }
+		&.isInactive{
+			border: 1px solid #aaa;
+			border-left: 4px solid #aaa;
+			opacity: .4;
+			.modeIndicator{
+				background: transparent;
+			}
+		}
 	}
 }
 

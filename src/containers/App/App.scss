@@ -1,11 +1,6 @@
 	@import '../../global/global.scss';
 
 .App{
-	// background: linear-gradient(#151515 0%, #4b4b4b 100%);
-	// background: linear-gradient( -5deg, #001a21, #16404c );
-	// background: linear-gradient(-25deg, #044658, #164c42);
-	// background: linear-gradient(175deg, #25d0ff, #033573);
-	// background: linear-gradient(175deg, #001e33, #00a9d0);
 	background: linear-gradient(-12deg, #ccc, #f3f3f3);
 	min-height: 100%;
 	lost-utility: clearfix;
@@ -40,7 +35,6 @@
 		top: 0;
 		width: 100%;
 		height: 100%;
-		background: #222;
 		z-index: 152;
 		transition: opacity .3s ease;
 		&.centered{
@@ -49,29 +43,20 @@
 		  justify-content: center;
 		}
 		.loadingMessage{
-			text-align: left;	
-			color: #eee;
+			text-align: center;	
+			font-style: italic;
+			position: relative;
+			.loadingText{
+				position: absolute;
+				top: 60%;
+				color: $nomosGrey;
+				padding-top: 8px;
+			}
 		}
 	}
 	////////////////////
 	///// STRUCTURE
 	////////////////////
-	.topBar{
-		// background: #fff;
-		height: 48px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    margin-bottom: 32px;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
-    .title{
-	    text-align: center;
-    }
-    .headerItem{
-	    padding: 8px;
-	    &.hamburgerWrap{
-		    padding: 16px;
-	    }
-    }
-	}
 	// @lost flexbox flex;
 	.footer{
 		// min-height: 156px;

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100px" height="100px" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
+    <title>AVATAR</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="AVATAR">
+            <g id="EYES" transform="translate(33.000000, 34.000000)" fill="#FF8B17">
+                <g id="eyes-8" transform="translate(5.000000, 10.000000)">
+                    <circle id="Oval" cx="2.1" cy="2" r="2"></circle>
+                    <circle id="Oval" cx="21.9" cy="2" r="2"></circle>
+                </g>
+            </g>
+            <g id="HAIR" transform="translate(7.000000, -2.000000)"></g>
+        </g>
+    </g>
+</svg>

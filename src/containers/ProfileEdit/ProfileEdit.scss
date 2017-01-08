@@ -1,0 +1,55 @@
+@import '../../global/global.scss';
+
+.ProfileEdit{
+	animation: slideUp .5s ease-in-out;
+	display: block;
+	width: 100%;
+	margin: 16px 0;
+	margin-top: 100px;
+	border-radius: 4px;
+	background: #fff;
+	box-shadow: $cardShadow;
+	padding: 24px;
+	position: relative;
+	.detailEdit{
+	}
+	.avatarWrap{
+		position: absolute;
+		left: 50%;
+		margin-left: -100px;
+		top: -100px;
+		width: 200px;
+		height: 200px;
+		display: block;
+		// border: 1px solid #eee;
+		background: #fff;
+		border-radius: 50%;
+		box-shadow: 0 -3px 1px -1px rgba(0,0,0,.1);
+		&.isEditing{
+			border: 2px solid $nomosBlue;
+		}
+		.avatarEditButtonWrap{
+			position: absolute;
+	    top: 110px;
+	    right: -40px;
+		}
+	}
+	.editAvatarWrap{
+		margin-top: 100px;
+		padding-bottom: 16px;
+		border-bottom: 1px dashed $nomosLightGrey;
+		margin-bottom: 16px;
+	}
+}
+
+// SLIDE IN ANIMATION
+@keyframes slideUp {
+  from {
+   	opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+   	opacity: 1;
+    transform: translateY(0px);
+  }
+}

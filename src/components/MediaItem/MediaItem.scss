@@ -10,4 +10,7 @@
 	.mediaContent {
 	  flex: 1;
 	}
+	&.clickable{
+		cursor: pointer;
+	}
 }

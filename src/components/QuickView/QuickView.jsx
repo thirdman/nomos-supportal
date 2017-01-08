@@ -36,10 +36,10 @@ export default class QuickView extends Component {
 		showInfo: this.props.showInfo,
 		childWidth: this.props.childWidth
 	}
-	showInfo() {
+	showInfo = () => {
     this.setState({ showInfo: true });
   }
-  hideInfo() {
+  hideInfo = () => {
     this.setState({ showInfo: false });
   }
 

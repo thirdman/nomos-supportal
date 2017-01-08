@@ -1,0 +1,59 @@
+@import '../../global/global.scss';
+
+.ProfileAvatar {
+	width: 200px;
+	height: 200px;
+	display: block;
+	position: relative;
+	.facePart{
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		display: block;
+		svg g{
+			// fill: pink;
+		}
+	}
+	.head{
+		background: pink;
+		display: none;
+	}
+	.hair{
+		background: transparent;
+	}
+	.head, .hair, .face, .feature{
+		background: transparent;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+	svg{ //targets the svg element inside the markup
+		width: 100%;
+		height: 100%;
+		line-height: 100%;
+		position: absolute;
+		display: block;
+		left: 0;
+		top: 0;
+	}
+	g{
+		fill: $nomosBlack;			
+	}
+	path{
+		fill: $nomosBlack;
+	}
+	&.black{
+		g{
+			fill: $nomosBlack;
+		}
+	}
+
+	// nodifiers
+	&.hasBackground{
+		background: #f9f9f9;
+	}
+}

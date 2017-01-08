@@ -182,6 +182,32 @@ export default class AdminEdit extends Component {
 													)}
 												/>
 											</ContentItem>
+											<ContentItem title="Project Start Date">
+												<InputText
+													label="Date expected to begin entering agreements"
+													placeholder="Date"
+													placeholderBelow
+													value={additionalData && additionalData.startDate && additionalData.startDate.toString()} // eslint-disable-line
+													onChangeProps={(value) => this.setState({
+															additionalData: {
+																...additionalData, startDate: parseFloat(value) }
+															}
+													)}
+												/>
+											</ContentItem>
+											<ContentItem title="Project End Date">
+												<InputText
+													label="Expected finish date"
+													placeholder="Date"
+													placeholderBelow
+													value={additionalData && additionalData.endDate && additionalData.endDate.toString()} // eslint-disable-line
+													onChangeProps={(value) => this.setState({
+															additionalData: {
+																...additionalData, endDate: parseFloat(value) }
+															}
+													)}
+												/>
+											</ContentItem>
 											<Section hasBackground title="Admin Users">
 												<Row>
 													<Column>

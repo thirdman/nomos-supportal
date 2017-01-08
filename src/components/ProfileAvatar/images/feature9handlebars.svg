@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100px" height="100px" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
+    <title>AVATAR</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="1 19 8 26 20 26 27 19 27 0 0.980776337 0"></polygon>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="AVATAR">
+            <g id="FACE" transform="translate(26.000000, 40.000000)">
+                <g id="face-9-handlebars" transform="translate(10.000000, 18.000000)">
+                    <g id="handlebars">
+                        <mask id="mask-2" fill="white">
+                            <use xlink:href="#path-1"></use>
+                        </mask>
+                        <g id="Path-2"></g>
+                        <path d="M1.5,14.0004544 L1.5,22.9995456 C1.5,29.9100281 7.09345016,35.5 14,35.5 C20.9044267,35.5 26.5,29.903703 26.5,22.9995456 L26.5,14.0004544 C26.5,7.08997194 20.9065498,1.5 14,1.5 C7.09557332,1.5 1.5,7.09629699 1.5,14.0004544 Z M6.5,14.0004544 C6.5,9.857576 9.85714183,6.5 14,6.5 C18.1458221,6.5 21.5,9.85209216 21.5,14.0004544 L21.5,22.9995456 C21.5,27.142424 18.1428582,30.5 14,30.5 C9.85417792,30.5 6.5,27.1479078 6.5,22.9995456 L6.5,14.0004544 Z" id="Combined-Shape" fill="#9B9B9B" mask="url(#mask-2)"></path>
+                        <path d="M14,26 L14,17" id="Line" stroke="#9B9B9B" stroke-width="3" stroke-linecap="round" mask="url(#mask-2)"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

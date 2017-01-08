@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100px" height="100px" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
+    <title>AVATAR</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="AVATAR">
+            <g id="NOSE-MOUTH" transform="translate(27.000000, 34.000000)" fill="#7ED321">
+                <g id="nosemouth-3">
+                    <path d="M26.3,31 L19.5,31 C18.7,31 18,31.7 18,32.5 C18,33.3 18.7,34 19.5,34 L26.3,34 C27.1,34 27.8,33.3 27.8,32.5 C27.8,31.7 27.1,31 26.3,31 Z" id="Shape"></path>
+                    <path d="M2,0.5 C1.17157288,0.5 0.5,1.17157288 0.5,2 C0.5,2.82842712 1.17157288,3.5 2,3.5 C13.9326402,3.5 20.1325244,9.03561086 18.5102741,22.8247381 L18.4457904,23.3728491 L18.7519246,23.8320503 C21.207131,27.5148599 25.6674146,27.0192728 27.3416408,23.6708204 C27.7121247,22.9298526 27.4117881,22.0288431 26.6708204,21.6583592 C25.9298526,21.2878753 25.0288431,21.5882119 24.6583592,22.3291796 C24.03933,23.567238 22.6534529,23.8240498 21.5564016,22.5725052 C23.142507,7.24766986 15.4127821,0.5 2,0.5 Z" id="Path-3"></path>
+                </g>
+            </g>
+            <g id="HAIR" transform="translate(7.000000, -2.000000)"></g>
+        </g>
+    </g>
+</svg>

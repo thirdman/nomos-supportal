@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100px" height="100px" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
+    <title>AVATAR</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M55,18 C58.861523,18 62,14.8670751 62,11.0049709 L62,6.99502908 C62,3.12952356 58.8662663,0 55,0 L55,4 C56.6583302,4 58,5.33986728 58,6.99502908 L58,11.0049709 C58,12.6563491 56.6539679,14 55,14 L55,18 Z" id="path-1"></path>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="AVATAR">
+            <path d="M74.1,39.2 L74.1,37.6 C74.1,24.3 63.3,13.5 50,13.5 C36.7,13.5 25.9,24.3 25.9,37.6 L25.9,57.2 L25.9,63.7 C25.9,66 26.7,68.4 28.1,70.2 L36,80.3 C36.5,80.9 41.2,86.5 45.7,86.5 L54.3,86.5 C58.8,86.5 63.5,81 64.1,80.3 L71.9,70.3 C73.3,68.5 74.1,66.2 74.1,63.8 L74.1,39.2 Z M70.1,63.8 C70.1,65.3 69.6,66.7 68.7,67.8 L61.5,77 L58,81 C57,82 56.3,83 50,83 C43.7,83 43,82 42,81 L38.5,77 L31.3,67.8 C30.4,66.7 29.9,65.2 29.9,63.8 L29.9,37.6 C29.9,26.5 38.9,17.5 50,17.5 C61.1,17.5 70.1,26.5 70.1,37.6 L70.1,63.8 Z" id="face-border" fill="#D1D1D1"></path>
+            <g id="ears" transform="translate(19.000000, 39.000000)">
+                <path d="M7,18 C3.13373374,18 0,14.8704764 0,11.0049709 L0,6.99502908 C0,3.13292487 3.13847703,0 7,0 L7,4 C5.34603211,4 4,5.3436509 4,6.99502908 L4,11.0049709 C4,12.6601327 5.34166981,14 7,14 L7,18 Z" id="ear-left" fill="#D1D1D1"></path>
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="ear-right" fill="#D1D1D1" xlink:href="#path-1"></use>
+            </g>
+        </g>
+    </g>
+</svg>

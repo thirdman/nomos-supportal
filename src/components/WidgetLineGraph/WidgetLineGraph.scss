@@ -1,0 +1,61 @@
+@import '../../global/global.scss';
+
+.WidgetLineGraph {
+	display: block;
+	margin-right: $padding;
+  padding-top: 2px;
+  min-width: 100px;
+  position: relative;
+  vertical-align: top;
+	.theContent{
+	}
+	.theUnits{
+		font-size: 12px;
+		color: $nomosLightGrey;
+    width: 100%;
+    text-align: center;
+	}
+	// VISIBLILITY
+	&.isVisible{
+		// background: rgba(0,0,0,.04);
+	}
+	// MODIFIERS
+	&.hasBackground{
+		// background: #f9f9f9;
+		background: rgba(0,0,0,.04);
+		padding: 8px;
+		border-radius: 4px;
+		padding-bottom: 16px; //allows for the labels
+	}
+	&.hasDivider{
+		.divider{
+			display: block;
+		  width: 100%;
+		  height: 2px;
+		  position: absolute;
+			top: 0;
+			background: $nomosBlack;
+		}
+	}
+	&.white{
+		color: #fff;
+		.divider{
+			background: #fff;
+		}
+		h4, h4.subtitle, .subtitle, .theContent, .theUnits{
+			color: #fff;
+		}
+	}
+}
+
+.tooltip{
+	background-color: #fff !important;
+	color: #000 !important;
+	transition: opacity .5s ease !important;
+	opacity: 1 !important;
+	text-align: left !important;
+	box-shadow: 0 0 8px -2px rgba(0,0,0,.4) !important;
+	text-transform: none;
+	font-weight: normal;
+	text-decoration: none;
+}

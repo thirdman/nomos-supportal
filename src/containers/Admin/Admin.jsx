@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { browserHistory } from 'react-router';
 import cx from 'classnames';
 import {
-	// Avatar,
+	Avatar,
 	// Button,
 	Column,
 	// ContentItem,
@@ -12,6 +12,7 @@ import {
 	MediaItemList,
 	// ObjectInfo,
 	// HorizontalRule,
+	ProfileAvatar,
 	Row,
 	Section,
 	LoadingAnimation,
@@ -87,17 +88,17 @@ export default class Admin extends Component {
 										onClick={() => this.orgSelect(item.id)}
 										key={index}>
 										<Row>
-											<Column occupy={6}>
+											<Column occupy={5}>
 												<h3>{item.attributes.knownAs}</h3>
 												<span className={styles.subtitle}>ID: {item.id}</span>
 											</Column>
-											<Column occupy={3}>
-												{this.state.additionalDataOrgs ?
+											<Column occupy={5}>
+												{this.state.orgUsers && this.state.additionalDataOrgs ?
 													this.showAdditionalInfo(item.id)
 													: null
 												}
 											</Column>
-											<Column occupy={3}>
+											<Column occupy={2}>
 												<span className={styles.theButtons}>
 													<div className={styles.iconWrap}>
 														<Icon icon="chevron-right" />
@@ -169,6 +170,7 @@ export default class Admin extends Component {
 			console.error('App error is', error);
 			console.log('the app data org is', error);
 		});
+		this.getOrgUsers();
 /*
 		base.bindToState('orgs', {
 			context: this,
@@ -192,23 +194,65 @@ export default class Admin extends Component {
 
 	showAdditionalInfo = (orgId) => {
 		const additionalOrgs = this.state.additionalDataOrgs;
+		console.log('this Id of org is', orgId);
+		const orgUsers = this.state.orgUsers;
+		// console.log('additional info getting orgUsers:', orgUsers);
+		// let thisOrgUsers = _.find(orgUsers, { dataId: parseFloat(orgId)}); //eslint-disable-line
+		let thisOrgUsers;
+		if (orgUsers[orgId]) {
+			thisOrgUsers = [];
+			thisOrgUsers = orgUsers[orgId];
+		}
+		console.log('thisOrgUsers', thisOrgUsers);
+
 		let thisAdd = _.find(additionalOrgs, { dataId: parseFloat(orgId)}); //eslint-disable-line
 		if (!thisAdd) {
 			return null;
 		} else {
 			return (
-				<span>
-					<h4>Additional Id: {thisAdd.dataId}</h4>
-					<span>Rep: {thisAdd.rep} </span>
-					<span
-						style={{
-						backgroundColor: thisAdd.color || 'transparent',
-						borderRadius: '2px',
-						width: '10px',
-						height: '10px'}} />
-					<span>
-					Color: {thisAdd.color}</span>
-				</span>
+				<div>
+					<Row>
+						<Column occupy={6}>
+							<span
+								style={{
+								backgroundColor: thisAdd.color || 'transparent',
+								borderRadius: '2px',
+								width: '10px',
+								height: '10px'}} />
+						</Column>
+						<Column occupy={6}>
+							<div className={styles.userIconsWrap}>
+								{thisOrgUsers ?
+									thisOrgUsers.map((item, index) => {
+											console.log('item user is: ', item);
+											return (
+												<span className={styles.userIconSlice} key={index}>
+													{ item.currentHair ?
+														<ProfileAvatar
+															hair={item.currentHair}
+															feature={item.currentFeature}
+															face={item.currentFace}
+															size={32}
+															title={item.fullName || null}
+														/>
+													:
+													<Avatar
+														size="small"
+														type="user"
+														imageUrl={item.img || null}
+														title={item.preferredName || item.fullName || null}
+														defaultIconColor="grey"
+														/>
+													}
+												</span>
+											);
+										})
+									: null
+								}
+							</div>
+						</Column>
+					</Row>
+				</div>
 			);
 		}
 	}
@@ -229,6 +273,15 @@ export default class Admin extends Component {
 			// this.setState({garethState: null});
 			console.log('this would set garethstate to null');
 		}
+	}
+
+	getOrgUsers = () => {
+		// const { orgId } = this.state;
+		base.syncState('orgUsers', {
+			context: this,
+			state: 'orgUsers',
+			asArray: false
+		});
 	}
 
 	saveDetail = (orgId) => {
@@ -263,20 +316,6 @@ export default class Admin extends Component {
 			detailActiveId: null,
 			detailActiveOrg: null,
 			additionalDetailActiveOrg: null
-		});
-	}
-	handleChangeComplete = (color) => {
-		// let thisOrgData = _.find(this.state.orgs, { id: parseFloat(orgId)}); //eslint-disable-line
-		console.log('color object is: ', color);
-		this.setState({
-			garethState: {
-				...this.state.garethState, color: color.hex }
-			});
-		this.toggleColorPicker();
-	}
-	toggleColorPicker = () => {
-		this.setState({
-			showColorPicker: !this.state.showColorPicker
 		});
 	}
 	// EDIT FUNTIONS
@@ -321,224 +360,3 @@ export default class Admin extends Component {
 		}, 300);
 	};
 }
-/*
-				<HorizontalRule />
-				{this.state.additionalDataOrgs ?
-					<Row>
-						<h4>Additional data:</h4>
-						{this.state.additionalDataOrgs.map((item, index) => {
-							return (
-							<div key={index} className={styles.additionalItem}>
-								{item.name}
-							</div>
-							);
-						})}
-					</Row>
-					: null
-				}
-*/
-/*
-		showDetailEdit = (orgId) => {
-		let thisAdditionalOrg = this.state.additionalDetailActiveOrg; //eslint-disable-line
-		let thisOrgData = this.state.detailActiveOrg; //eslint-disable-line
-		let garethState = this.state.garethState;
-		console.log('garethstate is ', garethState);
-		if (thisOrgData) {
-			return (
-				<div className={styles.detailEdit}>
-					<Section
-						title={`Detail for ${thisOrgData.attributes.knownAs}`}
-						description={`Id: ${thisOrgData.id}`}
-						/>
-
-							<Section
-								title="Additional Content Settings"
-								description={'These control the non-nomos type settings'}
-								>
-							<Row>
-								<Column occupy={8}>
-									<ContentItem title="RepId" type="text">
-										<InputText
-											placeholder="RepId"
-											placeholderBelow
-											value={garethState && garethState.repId &&
-											garethState.repId.toString()} // eslint-disable-line
-											onChangeProps={(value) => this.setState({
-													garethState: {
-														...garethState, repId: value }
-													}
-											)}
-										/>
-									</ContentItem>
-									<ContentItem title="Rep Name" type="text">
-										<InputText
-											placeholder="Rep Name"
-											// ref={(ref) => this.refInput = ref}
-											// ref={(c) => { this.repName = c; }}
-											placeholderBelow
-											// onChangeProps={this.updateName}
-											value={garethState && garethState.rep} // eslint-disable-line
-											onChangeProps={(value) => this.setState({
-													garethState: {
-														...garethState, rep: value }
-													}
-											)}
-										/>
-									</ContentItem>
-									<ContentItem title="Organisation initials" type="text">
-										<InputText
-											title="Org Initials"
-											placeholder="Initials"
-											placeholderBelow
-											// ref={(c) => { this.addInitials = c; }}
-											value={garethState && garethState.initials} // eslint-disable-line
-											onChangeProps={(value) => this.setState({
-													garethState: {
-														...garethState, initials: value }
-													}
-											)}
-										/>
-									</ContentItem>
-									<ContentItem title="Color">
-										<InputText
-											title="Color"
-											label="the color of the icon and highlightes"
-											placeholder="Color"
-											value={garethState && garethState.color} // eslint-disable-line
-											onChangeProps={(value) => this.setState({
-													garethState: {
-														...garethState, color: value }
-													}
-											)}
-										/>
-										<div
-											className={styles.colorDemo}
-											onClick={this.toggleColorPicker}
-											style={{
-												backgroundColor: garethState &&
-												garethState.color
-												}}
-											/>
-										{this.state.showColorPicker ?
-											<span className={styles.colorPickerWrap}>
-												<SketchPicker
-													color={garethState &&
-														garethState.color}
-													onChangeComplete={this.handleChangeComplete}
-													/>
-											</span>
-											: null
-										}
-									</ContentItem>
-									<ContentItem title="Projected Agreement Count">
-										<InputText
-											label="the number of agreements expected"
-											placeholder="Number of Agreements"
-											placeholderBelow
-											value={garethState && garethState.projectedAgreementCount &&
-											garethState.projectedAgreementCount.toString()} // eslint-disable-line
-											onChangeProps={(value) => this.setState({
-													garethState: {
-														...garethState, projectedAgreementCount: parseFloat(value) }
-													}
-											)}
-										/>
-									</ContentItem>
-									<Section hasBackground title="Admin Users">
-										<Row>
-											<Column>
-												<h4>Available Users</h4>
-												{
-													this.state.additionalUsers ?
-													<span>
-														{
-															this.state.additionalUsers &&
-															this.state.additionalUsers.map((item, index) => {
-																return (
-																	<MediaItem
-																		content={item.fullName}
-																		username={item.fullName}
-																		imageUrl={item.img}
-																		type="user"
-																		key={index}
-																		/>
-																);
-															})
-														}
-													</span>
-													:
-													<span>users do not exist</span>
-												}
-											</Column>
-										</Row>
-									</Section>
-								</Column>
-								<Column occupy={4}>
-									<Section hasBackground>
-										<Row>
-											<Column>
-												<h4 className={styles.subtitle}>Icon</h4>
-												<span
-													className={styles.exampleIconWrap}
-													style={
-														garethState &&
-														garethState.color ?
-															{
-																backgroundColor: garethState.color,
-																color: '#fff'
-															}
-														:
-														{
-															backgroundColor: 'transparent',
-															border: '1px dashed #ddd',
-															color: '#777'
-														}
-													}
-												>
-													<span>{garethState && garethState.initials}</span>
-												</span>
-											</Column>
-										</Row>
-										<Row>
-											<Column>
-												<h4 className={styles.subtitle}>Rep</h4>
-												<span>{garethState && garethState.rep}</span>
-											</Column>
-										</Row>
-										<Row>
-											<Column>
-												<h4 className={styles.subtitle}>Id</h4>
-												<span>{garethState && garethState.repId}</span>
-											</Column>
-										</Row>
-										<Row>
-											<Column>
-												<h4 className={styles.subtitle}>Initials</h4>
-												<span>{garethState && garethState.initials}</span>
-											</Column>
-										</Row>
-										<Row>
-											<Column>
-												<h4 className={styles.subtitle}>Projected Agreement Count</h4>
-												<span>{garethState &&
-													garethState.projectedAgreementCount}</span>
-											</Column>
-										</Row>
-									</Section>
-								</Column>
-								</Row>
-							</Section>
-
-						<Section>
-							<Button
-								content="Submit"
-								classNameProps={['highlighted']}
-								onClickProps={() => this.saveDetail(orgId)}
-								/>
-							<Button content="cancel" onClickProps={this.closeDetail} />
-						</Section>
-				</div>
-			);
-		}
-	}
-*/

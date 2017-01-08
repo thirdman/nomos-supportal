@@ -3,33 +3,35 @@ import {
 	Avatar,
 	Button,
 	Icon,
-	Section,
-	ContentItem,
-	InputText
+	ProfileAvatar,
 	} from 'components';
 import cx from 'classnames';
 import { browserHistory } from 'react-router';
-// import { autobind } from 'core-decorators';
-// import { connect } from '../../../utils/state';
 
 const styles = require('./UiUserMenu.scss');
+const Rebase = require('re-base');
 
-// @connect('store')
+const base = Rebase.createClass({
+      apiKey: 'AIzaSyBLhVms5SJQKFQyAN4p6jUnJsukXhAXKH8',
+      authDomain: 'nomos-supportal.firebaseapp.com',
+      databaseURL: 'https://nomos-supportal.firebaseio.com/',
+      storageBucket: 'nomos-supportal.appspot.com',
+});
+
 export default class UiUserMenu extends Component {
 
 	state = {
 		isOpen: false,
-		profileActive: false,
 		user: this.props.user
 	};
 	componentWillMount() {
-		// console.log('usermenu mounting...');
 	}
+	componentDidMount() {
+		this.setupComponent(this.props.user);
+	}
+
 	render() {
-		// const { auth } = this.context.store;
-		const { isOpen, user, profileActive } = this.state;
-		// console.log(user, isOpen);
-		// console.log(Button, isOpen);
+		const { isOpen, user, userData } = this.state;
 		return (
 			<div className={styles.UiUserMenu}>
 				<div
@@ -38,19 +40,118 @@ export default class UiUserMenu extends Component {
 						(this.state.isOpen ? styles.isOpen : ''))}
 					onClick={this.toggleOpen}
 				>
-					<Avatar
-						iconType="user"
-						// imageUrl="http://keenthemes.com/preview/metronic/theme/assets/pages/media/profile/profile_user.jpg"
-						size="large"
-						title={user && user.username}
-						classNameProps={['medium', 'fill']} />
+					{ userData && userData.currentHair ?
+						<ProfileAvatar
+							hair={userData.currentHair}
+							feature={userData.currentFeature}
+							face={userData.currentFace}
+							size={32}
+							title={userData.fullName || null}
+						/>
+					:
+						<Avatar
+							size="medium"
+							type="user"
+							imageUrl={(userData && userData.img) || null}
+							title={user.username || null}
+							defaultIconColor="grey"
+							/>
+					}
 				</div>
 				<span className={styles.arrowWrap} onClick={this.toggleOpen}>
 					{isOpen ?
-						<Icon icon="chevron-up" color="black" size={12} />
-						: <Icon icon="chevron-down" color="blue" size={12} />
+						<Icon icon="chevron-up" color="blue" size={10} />
+						: <Icon icon="chevron-down" color="black" size={10} />
 					}
 				</span>
+				{isOpen &&
+					<div className={styles.actionItems}>
+						<div className={styles.triangle} />
+							<div className={styles.userActionHeader}>
+								<h4 className={styles.subtitle}>USER</h4>
+								<span className={styles.userNameText} >{user && user.username}</span>
+							</div>
+								<Button
+									key={'optionProfile'}
+									content={'Profile'}
+									onClickProps={this.doProfile}
+									classNameProps={['btn', 'text', 'actionItem']} />
+								<Button
+									key={'optionAdmin'}
+									content={'Admin'}
+									onClickProps={this.doAdmin}
+									classNameProps={['btn', 'text', 'actionItem']} />
+								<Button
+									key={'optionLogout'}
+									content={'Log out'}
+									onClickProps={this.logout}
+									classNameProps={['btn', 'text', 'actionItem']} />
+					</div>
+				}
+			</div>
+		);
+	}
+	setupComponent = (user) => {
+		let userId;
+		let thisUser;
+		base.fetch('users', {
+			context: this,
+			asArray: false
+			}).then(data => {
+				thisUser = _.find(data, { username: user.username}); //eslint-disable-line
+				userId = thisUser.dataId;
+				this.setState({
+					userId,
+					userData: thisUser,
+					loading: false
+				}, () => this.syncUser(userId));
+			}).catch(error => {
+				console.log('Loading error is', error);
+		});
+	}
+	syncUser = (userId) => {
+		base.syncState(`users/${userId}`, {
+			context: this,
+			state: 'userData',
+			asArray: false
+		});
+	}
+	toggleOpen = () => {
+		// console.log(this.state);
+		this.setState({ isOpen: !this.state.isOpen}, () => this.doTimeout());
+	}
+	doTimeout = (time) => {
+		let timeDelay = time || 5000;
+		console.log('starting timeout of ', timeDelay);
+		setTimeout(() => {
+		console.log('doing timeout');
+			this.setState({
+				isOpen: false
+			});
+		}, timeDelay);
+	}
+	doAdmin = () => {
+		browserHistory.push('/admin');
+	}
+	doProfile = () => {
+		browserHistory.push('/profile/');
+	}
+	logout = () => {
+		const tempObject = {user: null};
+		localStorage.setItem('nomosSupportal', JSON.stringify(tempObject));
+		browserHistory.push('/login');
+	}
+}
+/*
+	toggleProfile = () => {
+		// const { profileActive } = this.state;
+		console.info('toggling profile');
+		this.setState({
+			profileActive: !this.state.profileActive
+		});
+	}
+*/
+/*
 				{profileActive ?
 					<div className={styles.profile}>
 						<div className={styles.backdrop} >
@@ -73,50 +174,21 @@ export default class UiUserMenu extends Component {
 					</div>
 					: null
 				}
-				{isOpen &&
-					<div className={styles.actionItems}>
-						<div className={styles.triangle} />
-							<div className={styles.userActionHeader}>
-								<h4 className={styles.subtitle}>USER</h4>
-								<span className={styles.userNameText} >{user && user.username}</span>
-							</div>
+*/
+
+/*
 								<Button
 									key={'optionProfile'}
 									content={'Profile'}
 									onClickProps={this.toggleProfile}
 									classNameProps={['btn', 'text', 'actionItem']} />
-								<Button
-									key={'optionAdmin'}
-									content={'Admin'}
-									onClickProps={this.doAdmin}
-									classNameProps={['btn', 'text', 'actionItem']} />
-								<Button
-									key={'optionLogout'}
-									content={'Log out'}
-									onClickProps={this.logout}
-									classNameProps={['btn', 'text', 'actionItem']} />
-					</div>
-				}
-			</div>
-		);
-	}
-	toggleOpen = () => {
-		// console.log(this.state);
-		this.setState({ isOpen: !this.state.isOpen});
-	}
-	doAdmin = () => {
-		browserHistory.push('/admin');
-	}
-	logout = () => {
-		const tempObject = {user: null};
-		localStorage.setItem('nomosSupportal', JSON.stringify(tempObject));
-		browserHistory.push('/login');
-	}
-	toggleProfile = () => {
-		// const { profileActive } = this.state;
-		console.info('toggling profile');
-		this.setState({
-			profileActive: !this.state.profileActive
-		});
-	}
-}
+
+*/
+/*
+					<Avatar
+						iconType="user"
+						// imageUrl="http://keenthemes.com/preview/metronic/theme/assets/pages/media/profile/profile_user.jpg"
+						size="large"
+						title={user && user.username}
+						classNameProps={['medium', 'fill']} />
+*/
