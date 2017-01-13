@@ -159,7 +159,11 @@ export default class Home extends Component {
 						<h4>Users</h4>
 						{users && users.map((item, index) => {
 							return (
-								<div className={styles.userItem} key={index} style={{width: '100%'}}>
+								<div
+								className={styles.userItem}
+								key={index}
+								style={{width: '100%'}}
+								>
 									<Avatar
 										size="small"
 										type="user"
@@ -185,7 +189,12 @@ export default class Home extends Component {
 							(<div>
 								<h4>Support Team</h4>
 								{orgUsers[activeOrgDataId].map((item, index) => (
-									<div className={styles.userItem} style={{width: '100%'}} key={index}>
+									<div
+									className={styles.userItem}
+									style={{width: '100%'}}
+									key={index}
+									onClick={() => this.goTo(item.dataId)}
+									>
 										<Avatar
 											size="small"
 											type="user"
@@ -643,7 +652,7 @@ export default class Home extends Component {
 
 	// GROUPS AGREEMENTS FOR GRAPHS
 	showAgreements = () => {
-		const { agreements } = this.state;
+		const { agreements, additionalData } = this.state;
 		const monthNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 		const weekNumbers = [];
 		const weekCount = 52;
@@ -658,6 +667,8 @@ export default class Home extends Component {
 		]);
 		let monthsArray = [];
 		let weeksArray = [];
+		let weeksArrayCumulative = [];
+		let amountCumulative = 0;
 		let yearsandmonthsArray = [];
 		let currentYear;
 		let groupByYear = _.groupBy(
@@ -704,13 +715,12 @@ export default class Home extends Component {
 			yearsandmonthsArray.push(yearobject);
 			console.log('------');
 		});
-
+		let dataToReturnCumulative;
 		let tempGroupByWeek = _.forEach(groupByYear, (value, key) => {
 			currentYear = key;
 			let thisWeekGrouped = _.groupBy(
 				value, (item) => moment(item.attributes.insertedDate).week()
 			);
-
 			let weekset = weekNumbers.map((number) => {
 				let dataToReturn = {
 					label: `Week ${moment().week(number).format('gg')} ${currentYear}`,
@@ -724,6 +734,18 @@ export default class Home extends Component {
 								amount: avalue.length,
 								data: avalue
 								};
+							let previousCumulative = amountCumulative;
+							amountCumulative = amountCumulative + avalue.length; //eslint-disable-line
+							if (previousCumulative !== amountCumulative) {
+								dataToReturnCumulative = {
+									label: `Week ${moment().week(parseFloat(akey)).format('gg')} ${currentYear}`,
+									amount: avalue.length,
+									amountCumulative: amountCumulative, //eslint-disable-line
+									data: avalue
+									};
+							} else {
+								dataToReturnCumulative = null;
+							}
 							return true;
 						} else {
 							return false;
@@ -732,6 +754,9 @@ export default class Home extends Component {
 				);
 				console.info('isInThis', isInThis);
 				weeksArray.push(dataToReturn);
+				if (dataToReturnCumulative) {
+					weeksArrayCumulative.push(dataToReturnCumulative);
+				}
 				return dataToReturn;
 			});
 			console.log('weekset', weekset);
@@ -740,6 +765,8 @@ export default class Home extends Component {
 		console.log('tempGroupByMonth', tempGroupByMonth);
 		console.log('tempGroupByWeek', tempGroupByWeek);
 		console.log('yearsandmonthsArray', yearsandmonthsArray);
+		console.log('final amount cumulative is', amountCumulative);
+		console.log('weeksArrayCumulative is', weeksArrayCumulative);
 
 		let yearData = Object.keys(groupByYear).map((key) => {
 			let theValue = {
@@ -758,6 +785,29 @@ export default class Home extends Component {
 				}
 			);
 		});
+		let initialDate = additionalData && additionalData.startDate;
+		console.log('initial date is: ', initialDate);
+		let tempNumber = 0;
+		let cumulativeDataForLine = weeksArrayCumulative.map((item) => {
+			let doit = null;
+			let newValue = amountCumulative - item.amountCumulative;
+			if (newValue === tempNumber) {
+				doit = ({
+						name: item.label,
+						value: (amountCumulative - item.amountCumulative)
+					});
+			} else {
+				doit = ({
+						name: item.label,
+						value: (amountCumulative - item.amountCumulative)
+					});
+			}
+			tempNumber = newValue;
+				return doit;
+		});
+		// cumulativeDataForLine = cumulativeDataForLine.filter(function (n) {return n !== undefined});
+		// cumulativeDataForLine = cumulativeDataForLine.filter(n => n);
+		console.log('cumulativeDataForLine', cumulativeDataForLine);
 		console.log('monthDataForLine', monthDataForLine);
 		return (
 			<span>
@@ -809,11 +859,19 @@ export default class Home extends Component {
 				</Row>
 				<Row>
 				<Column>
+					<WidgetLineGraph title="Weekly cumulative" data={cumulativeDataForLine} />
+				</Column>
+				</Row>
+				<Row>
+				<Column>
 					<WidgetLineGraph title="test line" />
 				</Column>
 				</Row>
 			</span>
 		);
+	}
+	goTo = (userId) => {
+		browserHistory.push(`/profile/${userId}`);
 	}
 
 	/* OLD THINGS */

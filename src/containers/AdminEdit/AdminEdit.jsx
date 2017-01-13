@@ -1,6 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
 import { SketchPicker } from 'react-color';
+// import { DatePicker } from 'react-datepicker';
+// import 'react-datepicker/dist/react-datepicker.css';
+import moment from 'moment';
 import cx from 'classnames';
 import {
 	browserHistory
@@ -38,8 +41,9 @@ export default class AdminEdit extends Component {
 		transition: false,
 		orgId: this.props.orgId,
 		showColorPicker: false,
-		additionalData: null
-	}
+		additionalData: null,
+		startDate: moment()
+		}
 	componentWillMount() {
 		if (this.props.params.dataId) {
 			console.log('coming from a url, so set the id this way');
@@ -187,14 +191,14 @@ export default class AdminEdit extends Component {
 													label="Date expected to begin entering agreements"
 													placeholder="Date"
 													placeholderBelow
-													value={additionalData && additionalData.startDate && additionalData.startDate.toString()} // eslint-disable-line
+													value={additionalData && additionalData.startDate} // eslint-disable-line
 													onChangeProps={(value) => this.setState({
 															additionalData: {
-																...additionalData, startDate: parseFloat(value) }
+																...additionalData, startDate: value }
 															}
 													)}
 												/>
-											</ContentItem>
+												</ContentItem>
 											<ContentItem title="Project End Date">
 												<InputText
 													label="Expected finish date"
@@ -203,7 +207,7 @@ export default class AdminEdit extends Component {
 													value={additionalData && additionalData.endDate && additionalData.endDate.toString()} // eslint-disable-line
 													onChangeProps={(value) => this.setState({
 															additionalData: {
-																...additionalData, endDate: parseFloat(value) }
+																...additionalData, endDate: value }
 															}
 													)}
 												/>
@@ -521,7 +525,13 @@ export default class AdminEdit extends Component {
 			showColorPicker: !this.state.showColorPicker
 		});
 	}
-
+	handleStartDateChange = (date) => {
+		const { additionalData } = this.state;
+		this.setState({
+			additionalData: {
+				...additionalData, startDate: date }
+		});
+	}
 	// UTILIITY FUNTIONS
 	doTransition = (page) => {
 		console.log(page);
@@ -626,4 +636,17 @@ export default class AdminEdit extends Component {
 
 <h4>AdminUsers2 </h4>
 	{this.adminUsers()}
+*/
+/*
+													<DatePicker
+													// selected={additionalData && moment(additionalData.startDate)}
+													selected={moment()}
+													placeholderText="Click to select a date"
+													onChange={this.handleStartDateChange}
+													// onChange={(date) => this.setState({
+															// additionalData: {
+																// ...additionalData, startDate: date }
+															// }
+													// )}
+													/>
 */
