@@ -6,14 +6,29 @@
 	width: 100%;
 	margin: 16px 0;
 	margin-top: 100px;
-	border-radius: 4px;
-	background: #fff;
-	box-shadow: $cardShadow;
-	padding: 24px;
+	// background: #fff;
   position: relative;
   max-width: 680px;
+ // height: 400px;
   margin-left: auto;
   margin-right: auto;
+	perspective: 1000px;
+	margin-bottom: 100px;
+
+  .editWrap, .closeWrap{
+	  position: absolute;
+	  right: 0;
+	  top: -40px;
+	  width: 20px;
+	  height: 20px;
+	  display: block;
+	  z-index: 2;
+	  cursor: pointer;
+  }
+  .editWrap{
+	  right: 40px;
+	  top: -44px;
+  }
   .title{
 	  margin-top: 90px;
   }
@@ -60,6 +75,40 @@
     padding: 16px;
     padding-top: 100px;
     border-radius: 0 4px 4px 0;
+	}
+	
+	.card{
+		width: 100%;
+		// height: 100%;
+		display: block;
+		top:0;
+		left: 0;
+		border-radius: 4px;
+		box-shadow: $cardShadow;
+		padding: 24px;
+		transition: 0.6s;
+		transform-style: preserve-3d;
+		backface-visibility: hidden;
+		position: absolute;
+
+	}
+	.front{
+		background: #fff;	
+	}
+	.back{
+		background: #f9f9f9;	
+		transform: rotateY(180deg);
+	}
+	// MODIFIERS
+	&.isEditing{
+		.card{			  
+		}
+		.card.front{
+			transform: rotateY(180deg);
+		}
+		.card.back{
+			transform: rotateY(0deg);
+		}
 	}
 }
 

@@ -6,6 +6,7 @@ export LoadingAnimation from './LoadingAnimation/LoadingAnimation';
 // export Section from './Section';
 export TransitionAnimation from './TransitionAnimation/TransitionAnimation';
 
+export Achievements from './Achievements/Achievements';
 export Avatar from './Avatar/Avatar';
 export Breadcrumbs from './Breadcrumbs/Breadcrumbs';
 export Button from './Button/Button';
@@ -50,3 +51,5 @@ export UiUserMenu from './UiUserMenu/UiUserMenu';
 export WidgetColumns from './WidgetColumns/WidgetColumns';
 export WidgetPie from './WidgetPie/WidgetPie';
 export WidgetLineGraph from './WidgetLineGraph/WidgetLineGraph';
+
+export ReactInspectlet from './Inspectlet/Inspectlet';

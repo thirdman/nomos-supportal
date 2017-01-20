@@ -1,0 +1,67 @@
+@import '../../global/global.scss';
+
+.Achievements{
+	display: block;
+	height: 100%;
+	lost-flex-container: row;
+	.badge{
+		lost-waffle: 1/3 flex;
+		display: block;
+		height: 130px;
+		padding: 4px 8px 8px;
+		// width: 33%;
+		// float: left;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		margin: 2px;
+		background: transparent;
+		animation: foldIn .3s ease-in-out;
+		// transition: .2s opacity ease-in-out;
+		opacity: 0;
+		&:hover{
+			background: #f3f3f3;
+		}
+		&.isVisible{
+			opacity: 1;
+		}
+	  @for $i from 1 through 24 {
+	    &:nth-child(#{$i}) { 
+	     animation-delay: $animationInterval * $i;
+	     transition-delay: $animationInterval * $i;
+	    }
+	  }
+	}
+	.iconWrap{
+		width: 56px;
+		height: 56px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+@keyframes slideIn {
+  from {
+   	opacity: 0;
+    transform: translateY(24px), scaleY(0);
+  }
+  to {
+   	opacity: 1;
+    transform: translateY(0px), scaleY(1);
+  }
+}
+@keyframes foldIn {
+  0% {
+      opacity: 0;
+      transform-style: preserve-3d;
+      transform-origin: 50% 0;
+		  // transform:scale(1) rotateX(-60deg) translateY(9px);
+			transform:scale3d(1, 0, 1) rotateX(-90deg) translateY(50px);
+			// transform:scale3d(1, 0, 1) rotateX(-90deg) translateY(0);
+  }
+  100% {
+      opacity: 1;
+      transform-style: preserve-3d;
+      transform-origin: 50% 0;
+			transform: scale3d(1, 1, 1) rotateX(0deg)  translateY(0) ;
+ }
+}

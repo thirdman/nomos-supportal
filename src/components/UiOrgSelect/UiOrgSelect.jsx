@@ -58,7 +58,7 @@ export default class UiOrgSelect extends Component {
 								<span className={styles.subtitle}>Agreements: {item.additionalData &&
 									item.additionalData.enteredAgreementCount}</span>
 								<span className={styles.subtitle}>Projected: {item.additionalData &&
-									item.additionalData.progectedAgreementCount}</span>
+									item.additionalData.projectedAgreementCount}</span>
 							</div>
 						</div>
 					);

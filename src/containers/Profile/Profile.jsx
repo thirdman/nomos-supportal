@@ -2,11 +2,15 @@ import React, { Component, PropTypes } from 'react';
 // import _ from 'lodash';
 import cx from 'classnames';
 import { browserHistory	} from 'react-router';
+import ReactTooltip from 'react-tooltip';
 import {
+	Achievements,
 	Avatar,
+	Button,
 	Column,
 	ContentItem,
-	// Icon,
+	Icon,
+	InputText,
 	// MediaItem,
 	// ObjectInfo,
 	// HorizontalRule,
@@ -32,7 +36,8 @@ export default class Profile extends Component {
 		loading: true,
 		transition: false,
 		userId: this.props.userId,
-		additionalData: null
+		additionalData: null,
+		isEditing: false
 	}
 	componentWillMount() {
 	}
@@ -50,80 +55,165 @@ export default class Profile extends Component {
 		const {
 			loading,
 			userData,
+			isEditing,
+			achievements
 			} = this.state;
 		return (
-			<div className={cx(styles.Profile)}>
+			<div className={cx(styles.Profile, isEditing ? styles.isEditing : '')}>
 					{loading ?
 							<LoadingAnimation />
 						: null
 					}
-					{userData ?
-						<div
-						className={cx(styles.avatarWrap,
-							this.state.editAvatar ? styles.isEditing : ''
-							)}
-						id="avatarWrap"
-						>
-							{userData.currentFace ?
-								<ProfileAvatar
-									face={userData && userData.currentFace}
-									hair={userData && userData.currentHair}
-									feature={userData && userData.currentFeature}
+					<div className={cx(styles.card, styles.front)}>
+						<div className={styles.closeWrap} onClick={browserHistory.goBack}>
+							<Icon icon="x" color="black" hoverColor="blue" size={16} />
+						</div>
+						<div className={styles.editWrap} onClick={this.toggleEditing}>
+							<Icon icon="edit" color="black" hoverColor="blue" size={24} />
+						</div>
+						{userData ?
+							<div
+							className={cx(styles.avatarWrap,
+								this.state.editAvatar ? styles.isEditing : ''
+								)}
+							id="avatarWrap"
+							>
+								{userData.currentFace ?
+									<ProfileAvatar
+										face={userData && userData.currentFace}
+										hair={userData && userData.currentHair}
+										feature={userData && userData.currentFeature}
+									/>
+								:
+								<Avatar
+									size="xlarge"
+									type="user"
+									imageUrl={(userData && userData.img) || null}
+									title={userData.preferredName || userData.fullName || null}
+									defaultIconColor="grey"
 								/>
-							:
-							<Avatar
-								size="xlarge"
-								type="user"
-								imageUrl={(userData && userData.img) || null}
-								title={userData.preferredName || userData.fullName || null}
-								defaultIconColor="grey"
-							/>
-							}
-						</div>
+								}
+							</div>
+							: null
+						}
+						{userData ?
+							<div className={styles.detailEdit}>
+								<h1 className={styles.title}>
+									{userData.preferredName || userData.fullName}
+								</h1>
+									<Section>
+										<Row>
+											<Column occupy={6}>
+												<ContentItem title="Full Name" type="text">
+													<span>{userData && userData.fullName}</span>
+												</ContentItem>
+												<ContentItem title="Nickname/Preferred Name" type="text">
+													<span>{userData && userData.preferredName}</span>
+												</ContentItem>
+												<ContentItem title="Avatar Image" type="text">
+													<Avatar type="user" imageUrl={userData.img} size="medium" />
+												</ContentItem>
+											</Column>
+										</Row>
+								</Section>
+							</div>
 						: null
-					}
-					{userData ?
-						<div className={styles.detailEdit}>
-							<h1 className={styles.title}>
-								{userData.preferredName || userData.fullName}
-							</h1>
-								<Section>
-									<Row>
-										<Column occupy={6}>
-											<ContentItem title="Full Name" type="text">
-												<span>{userData && userData.fullName}</span>
-											</ContentItem>
-											<ContentItem title="Nickname/Preferred Name" type="text">
-												<span>{userData && userData.preferredName}</span>
-											</ContentItem>
-											<ContentItem title="Avatar Image" type="text">
-												<Avatar type="user" imageUrl={userData.img} size="medium" />
-											</ContentItem>
-										</Column>
-										<Column occupy={6} />
-									</Row>
-									</Section>
+						}
+						<div
+							className={styles.sideb}
+							>
+							<Row>
+								<Column occupy={4}>
+									<ContentItem title="Id" type="text">
+										<span>{this.props.params.dataId}</span>
+									</ContentItem>
+								</Column>
+								<Column occupy={4}>
+									<ContentItem title="Nomos XP" type="text">
+										<span>{userData && userData.xp}</span>
+									</ContentItem>
+								</Column>
+								<Column occupy={4}>
+									<ContentItem title="Role" type="text">
+										<span>{userData && userData.role}</span>
+									</ContentItem>
+								</Column>
+							</Row>
+							<Row>
+								{achievements && userData && userData.badges ?
+									() => this.doBadges(userData.badges)
+									: null
+								}
+							</Row>
 						</div>
-					: null
-					}
-					<div
-						className={styles.sideb}
+					</div>
+					<div className={cx(styles.card, styles.back)}>
+						<Section
+							title="Settings"
+							description={'Amin user only'}
+							>
+							<Row>
+								<Column occupy={6}>
+									<ContentItem title="Nomos XP" type="text">
+										<InputText
+											placeholder=""
+											placeholderBelow
+											value={userData && userData.xp}
+											onChangeProps={(value) => this.setState({
+												userData: {
+													...userData, xp: value }
+												}
+											)}
+										/>
+									</ContentItem>
+								</Column>
+								<Column occupy={6}>
+									<ContentItem title="Role" type="text">
+										<InputText
+											placeholder=""
+											placeholderBelow
+											value={userData && userData.role}
+											onChangeProps={(value) => this.setState({
+												userData: {
+													...userData, role: value }
+												}
+											)}
+										/>
+									</ContentItem>
+								</Column>
+							</Row>
+							<Button
+								onClickProps={this.toggleEditing}
+								content="done"
+								classNameProps={['highlighted']}
+							/>
+						</Section>
+						<Section
+							title="Achievements"
+							hasBackground
 						>
-						<ContentItem title="Id" type="text">
-							<span>{this.props.params.dataId}</span>
-						</ContentItem>
-						<ContentItem title="Nomos XP" type="text">
-							<span>{userData && userData.xp}</span>
-						</ContentItem>
-						<ContentItem title="Role" type="text">
-							<span>{userData && userData.role}</span>
-						</ContentItem>
+						{isEditing ?
+							<Achievements selected={[1, 2]} />
+							: null
+						}
+						</Section>
 					</div>
 			</div>
     );
   }
   setupPage = (userId) => {
 		console.log('fyi, the thisUser is: ', userId);
+		base.syncState(`users/${userId}`, {
+			context: this,
+			state: 'userData',
+			asArray: false
+		}, () => this.setState({loading: false}));
+		base.syncState('achievements', {
+			context: this,
+			state: 'achievements',
+			asArray: false
+		});
+	/*
 		base.fetch(`users/${userId}`, {
 			context: this,
 			asArray: false
@@ -139,7 +229,46 @@ export default class Profile extends Component {
 					loading: false
 				});
 		});
+	*/
+	this.setState({
+		loading: false
+	});
 	}
+
+	doBadges = (badges) => {
+		let achievements = this.state;
+		badges.map((item, index) => {
+			let hasAchieved = _.find(achievements, { 'dataId': parseFloat(item.dataId)}); //eslint-disable-line
+			if (hasAchieved) {
+				return (
+							<div
+								className={cx(styles.badge)}
+								data-tip={`${item.description} (${item.reason})`}
+								data-class={styles.tooltip}
+								data-for={`AchievementTooltip${1}`}
+								key={index}>
+								<div className={styles.iconWrap}>
+									<Icon icon="medal" size={64} />
+								</div>
+								<h4 style={{textAlign: 'center'}}>{item.name}</h4>
+								<div style={{textAlign: 'center'}} className={styles.subtitle}>
+									{item.subtitle}
+								</div>
+								<ReactTooltip id={`AchievementTooltip${1} `} type="light" />
+							</div>
+				);
+			} else {
+				return null;
+			}
+		});
+	}
+
+	toggleEditing = () => {
+		console.log('will edit');
+		this.setState({
+			isEditing: !this.state.isEditing
+		});
+	};
 
 	// UTILIITY FUNTIONS
 	doTransition = (page) => {
@@ -162,6 +291,14 @@ export default class Profile extends Component {
 			transition: !this.state.transition
 		});
 	};
+	makeId() {
+		let text = '';
+		let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		for (let i = 0; i < 5; i++) {
+			text += possible.charAt(Math.floor(Math.random() * possible.length));
+		}
+		return text;
+	}
 
 	// PROPS
 	static propTypes = {
